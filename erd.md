@@ -1,4 +1,4 @@
-```
+```mermaid
 erDiagram
   users["사용자 (A)"] {
     int id PK
@@ -130,4 +130,5 @@ erDiagram
   users ||--o{ notifications : "알림"
   users ||--o{ random_point_logs : "일별 참여"
   users ||--o{ creation_logs : "월별 생성"
+
 ```

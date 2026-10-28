@@ -19,6 +19,8 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api", apiRouter);
 
+코드래빗은 바보래요~
+
 // 이 두 줄은 항상 모든 라우트보다 아래에 있어야함. 위에 있으면 모든 요청이 404가 됨.
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -1,0 +1,8 @@
+# prisma contract emit 이 만드는 파일
+src/prisma/contract.json
+src/prisma/contract.d.ts
+
+# prisma db init · db update 가 만드는 기록
+migrations/
+
+pnpm-lock.yaml

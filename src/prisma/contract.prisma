@@ -1,0 +1,14 @@
+// use prisma-8
+
+model User {
+    id        Int                @id @default(autoincrement())
+    email     String             @unique
+    nickname  String             @unique
+    password  String?
+    googleId  String?            @unique @map("google_id")
+    points    Int                @default(0)
+    createdAt TimestamptzString  @default(now()) @map("created_at")
+    deletedAt TimestamptzString? @map("deleted_at")
+
+    @@map("users")
+}

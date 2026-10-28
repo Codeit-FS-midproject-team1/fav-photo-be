@@ -10,7 +10,8 @@
     "db:init": "prisma db init --config prisma.config.js",
     "db:update": "prisma db update --config prisma.config.js",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "contract:emit": "prisma contract emit --config prisma.config.js"
   },
   "keywords": [],
   "author": "",

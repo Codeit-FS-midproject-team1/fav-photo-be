@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 // 토큰이 없거나 위조·만료됐으면 null
 export const verifyToken = (token) => {

@@ -1,5 +1,5 @@
-import { unauthorized } from '../utils/http-error.js';
-import { verifyToken } from '../utils/token.js';
+import { unauthorized } from "../utils/http-error.js";
+import { verifyToken } from "../utils/token.js";
 
 // 로그인할 때 토큰을 jwt.sign({ userId }, JWT_ACCESS_SECRET)처럼 userId라는 이름으로 만들어야 이 미들웨어와 맞아요. 쿠키 이름도 명세대로 token이에요
 

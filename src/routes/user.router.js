@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router } from "express";
 
 export const createUserRouter = ({ userController, requireAuth }) =>
-  Router().get('/me', requireAuth, userController.getMe);
+  Router().get("/me", requireAuth, userController.getMe);

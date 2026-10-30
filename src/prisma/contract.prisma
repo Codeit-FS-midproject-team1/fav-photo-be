@@ -12,3 +12,29 @@ model User {
 
     @@map("users")
 }
+
+enum NotificationType {
+    @@type("pg/text@1")
+    SIGNUP             = "SIGNUP"
+    OFFER_RECEIVED     = "OFFER_RECEIVED"
+    OFFER_ACCEPTED     = "OFFER_ACCEPTED"
+    OFFER_REJECTED     = "OFFER_REJECTED"
+    PURCHASE_COMPLETED = "PURCHASE_COMPLETED"
+    SALE_COMPLETED     = "SALE_COMPLETED"
+    SOLD_OUT           = "SOLD_OUT"
+    LISTING_UPDATED    = "LISTING_UPDATED"
+}
+
+model Notification {
+    id        Int               @id @default(autoincrement())
+    userId    Int               @map("user_id")
+    user      User              @relation(fields: [userId], references: [id])
+    type      NotificationType
+    message   String
+    link      String?
+    isRead    Boolean           @default(false) @map("is_read")
+    createdAt TimestamptzString @default(now()) @map("created_at")
+
+    @@index([userId, createdAt])
+    @@map("notifications")
+}

@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'756ed2dcf16da89ab00e43c5e9560d2d4efd577d952e726dc07267eb250c6889'>;
+  StorageHashBase<'1af7909366d2e99bcd5488a370956296151f9224409fb2158103e7e42e238847'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -233,6 +233,23 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly Notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isRead: CodecTypes['pg/bool@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'] | null;
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+    };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -247,6 +264,23 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly Notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isRead: CodecTypes['pg/bool@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'] | null;
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -261,6 +295,23 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly notifications: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly is_read: CodecTypes['pg/bool@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'] | null;
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+    };
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -275,6 +326,23 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly notifications: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly is_read: CodecTypes['pg/bool@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'] | null;
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -289,6 +357,25 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
+  export type public_Notification = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isRead: CodecTypes['pg/bool@1']['output'];
+    link: CodecTypes['pg/text@1']['output'] | null;
+    message: CodecTypes['pg/text@1']['output'];
+    type:
+      | 'SIGNUP'
+      | 'OFFER_RECEIVED'
+      | 'OFFER_ACCEPTED'
+      | 'OFFER_REJECTED'
+      | 'PURCHASE_COMPLETED'
+      | 'SALE_COMPLETED'
+      | 'SOLD_OUT'
+      | 'LISTING_UPDATED';
+    userId: CodecTypes['pg/int4@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -304,6 +391,7 @@ export namespace Models {
 
 export declare const models: {
   public: {
+    Notification: Models.public_Notification;
     User: Models.public_User;
   };
 };
@@ -326,6 +414,91 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly notifications: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly is_read: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly link: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly message: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'notifications_user_id_created_at_idx_b562028f';
+                  readonly prefix: 'notifications_user_id_created_at_idx';
+                  readonly columns: readonly ['user_id', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notifications_user_id_idx_6c952402';
+                  readonly prefix: 'notifications_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notifications';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly users: {
               columns: {
                 readonly created_at: {
@@ -396,6 +569,21 @@ type ContractBase = Omit<
               foreignKeys: readonly [];
             };
           };
+          readonly valueSet: {
+            readonly NotificationType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'SIGNUP',
+                'OFFER_RECEIVED',
+                'OFFER_ACCEPTED',
+                'OFFER_REJECTED',
+                'PURCHASE_COMPLETED',
+                'SALE_COMPLETED',
+                'SOLD_OUT',
+                'LISTING_UPDATED',
+              ];
+            };
+          };
         };
       };
     };
@@ -406,12 +594,75 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly notifications: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Notification';
+    };
     readonly users: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Notification: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isRead: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly link: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly message: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'notifications';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly id: { readonly column: 'id' };
+                readonly isRead: { readonly column: 'is_read' };
+                readonly link: { readonly column: 'link' };
+                readonly message: { readonly column: 'message' };
+                readonly type: { readonly column: 'type' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
           readonly User: {
             readonly fields: {
               readonly createdAt: {
@@ -469,6 +720,33 @@ type ContractBase = Omit<
               };
             };
           };
+        };
+        readonly enum: {
+          readonly NotificationType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+              { readonly name: 'OFFER_RECEIVED'; readonly value: 'OFFER_RECEIVED' },
+              { readonly name: 'OFFER_ACCEPTED'; readonly value: 'OFFER_ACCEPTED' },
+              { readonly name: 'OFFER_REJECTED'; readonly value: 'OFFER_REJECTED' },
+              { readonly name: 'PURCHASE_COMPLETED'; readonly value: 'PURCHASE_COMPLETED' },
+              { readonly name: 'SALE_COMPLETED'; readonly value: 'SALE_COMPLETED' },
+              { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+              { readonly name: 'LISTING_UPDATED'; readonly value: 'LISTING_UPDATED' },
+            ];
+          };
+        };
+        readonly enumMemberTypes?: {
+          readonly NotificationType: readonly [
+            { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+            { readonly name: 'OFFER_RECEIVED'; readonly value: 'OFFER_RECEIVED' },
+            { readonly name: 'OFFER_ACCEPTED'; readonly value: 'OFFER_ACCEPTED' },
+            { readonly name: 'OFFER_REJECTED'; readonly value: 'OFFER_REJECTED' },
+            { readonly name: 'PURCHASE_COMPLETED'; readonly value: 'PURCHASE_COMPLETED' },
+            { readonly name: 'SALE_COMPLETED'; readonly value: 'SALE_COMPLETED' },
+            { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+            { readonly name: 'LISTING_UPDATED'; readonly value: 'LISTING_UPDATED' },
+          ];
         };
       };
     };

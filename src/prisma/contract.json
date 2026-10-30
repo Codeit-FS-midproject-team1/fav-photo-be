@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "notifications": {
+      "model": "Notification",
+      "namespace": "public"
+    },
     "users": {
       "model": "User",
       "namespace": "public"
@@ -12,7 +16,150 @@
   "domain": {
     "namespaces": {
       "public": {
+        "enum": {
+          "NotificationType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "SIGNUP",
+                "value": "SIGNUP"
+              },
+              {
+                "name": "OFFER_RECEIVED",
+                "value": "OFFER_RECEIVED"
+              },
+              {
+                "name": "OFFER_ACCEPTED",
+                "value": "OFFER_ACCEPTED"
+              },
+              {
+                "name": "OFFER_REJECTED",
+                "value": "OFFER_REJECTED"
+              },
+              {
+                "name": "PURCHASE_COMPLETED",
+                "value": "PURCHASE_COMPLETED"
+              },
+              {
+                "name": "SALE_COMPLETED",
+                "value": "SALE_COMPLETED"
+              },
+              {
+                "name": "SOLD_OUT",
+                "value": "SOLD_OUT"
+              },
+              {
+                "name": "LISTING_UPDATED",
+                "value": "LISTING_UPDATED"
+              }
+            ]
+          }
+        },
         "models": {
+          "Notification": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isRead": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "link": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isRead": {
+                  "column": "is_read"
+                },
+                "link": {
+                  "column": "link"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "notifications"
+            }
+          },
           "User": {
             "fields": {
               "createdAt": {
@@ -113,6 +260,116 @@
       "public": {
         "entries": {
           "table": {
+            "notifications": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('SIGNUP', 'OFFER_RECEIVED', 'OFFER_ACCEPTED', 'OFFER_REJECTED', 'PURCHASE_COMPLETED', 'SALE_COMPLETED', 'SOLD_OUT', 'LISTING_UPDATED')",
+                  "name": "notifications_type_check_d9525f4c",
+                  "prefix": "notifications_type_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "is_read": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
+                "link": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "notifications_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "notifications"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id",
+                    "created_at"
+                  ],
+                  "name": "notifications_user_id_created_at_idx_b562028f",
+                  "prefix": "notifications_user_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "notifications_user_id_idx_6c952402",
+                  "prefix": "notifications_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "users": {
               "columns": {
                 "created_at": {
@@ -193,13 +450,28 @@
                 }
               ]
             }
+          },
+          "valueSet": {
+            "NotificationType": {
+              "kind": "valueSet",
+              "values": [
+                "SIGNUP",
+                "OFFER_RECEIVED",
+                "OFFER_ACCEPTED",
+                "OFFER_REJECTED",
+                "PURCHASE_COMPLETED",
+                "SALE_COMPLETED",
+                "SOLD_OUT",
+                "LISTING_UPDATED"
+              ]
+            }
           }
         },
         "id": "public",
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "756ed2dcf16da89ab00e43c5e9560d2d4efd577d952e726dc07267eb250c6889"
+    "storageHash": "1af7909366d2e99bcd5488a370956296151f9224409fb2158103e7e42e238847"
   },
   "capabilities": {
     "postgres": {

@@ -1,14 +1,311 @@
 // use prisma-8
 
 model User {
-    id        Int                @id @default(autoincrement())
-    email     String             @unique
-    nickname  String             @unique
-    password  String?
-    googleId  String?            @unique @map("google_id")
-    points    Int                @default(0)
-    createdAt TimestamptzString  @default(now()) @map("created_at")
-    deletedAt TimestamptzString? @map("deleted_at")
+  id        Int                @id @default(autoincrement())
+  email     String             @unique
+  nickname  String             @unique
+  password  String?
+  googleId  String?            @unique @map("google_id")
+  points    Int                @default(0)
+  createdAt TimestamptzString  @default(now()) @map("created_at")
+  deletedAt TimestamptzString? @map("deleted_at")
 
-    @@map("users")
+  refreshTokens RefreshToken[]
+  createdPhotoCards PhotoCard[]
+  ownedCardItems CardItem[]
+  saleListings SaleListing[]
+  exchangeOffers ExchangeOffer[]
+  sellerTrades Trade[] @relation("TradeSeller")
+  counterpartTrades Trade[] @relation("TradeCounterpart")
+  pointHistories PointHistory[]
+  notifications Notification[]
+  randomPointLogs RandomPointLog[]
+  creationLogs CreationLog[]
+
+  @@check(expression: sql`"points" >= 0`, name: "users_points_nonnegative")
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        Int               @id @default(autoincrement())
+  userId    Int               @map("user_id")
+  tokenHash String            @unique @map("token_hash")
+  expiresAt TimestamptzString @map("expires_at")
+  createdAt TimestamptzString @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+enum PhotoCardMethod {
+  @@type("pg/text@1")
+
+  PHOTO
+  CRAFT
+  AI
+  ETC
+}
+
+enum PhotoCardGenre {
+  @@type("pg/text@1")
+
+  LANDSCAPE
+  PORTRAIT
+  ANIMAL
+  PLANT
+  OBJECT
+  ETC
+}
+
+model PhotoCard {
+  id            Int               @id @default(autoincrement())
+  creatorId     Int               @map("creator_id")
+  name          String
+  description   String
+  method        PhotoCardMethod
+  genre         PhotoCardGenre
+  price         Int
+  totalQuantity Int               @map("total_quantity")
+  imageUrl      String            @map("image_url")
+  createdAt     TimestamptzString @default(now()) @map("created_at")
+
+  cardItems CardItem[]
+  saleListings SaleListing[]
+  tradedInTrades Trade[] @relation("TradePhotoCard")
+  receivedInTrades Trade[] @relation("TradeReceivedPhotoCard")
+
+  creator User @relation(fields: [creatorId], references: [id])
+
+  @@check(expression: sql`"price" BETWEEN 1 AND 1000`, name: "photo_cards_price_range")
+
+  @@map("photo_cards")
+}
+
+enum CardItemStatus {
+  @@type("pg/text@1")
+
+  HELD
+  ON_SALE
+  OFFERED
+}
+
+model CardItem {
+  id          Int               @id @default(autoincrement())
+  photoCardId Int               @map("photo_card_id")
+  ownerId     Int               @map("owner_id")
+  status      CardItemStatus
+  listingId   Int?              @map("listing_id")
+  offerId     Int?              @map("offer_id")
+  acquiredAt  TimestamptzString @map("acquired_at")
+
+  photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
+  owner     User      @relation(fields: [ownerId], references: [id])
+  listing SaleListing? @relation(fields: [listingId], references: [id])
+  offer ExchangeOffer? @relation("CardItemOfferLink", fields: [offerId], references: [id])
+
+  offeredInOffers ExchangeOffer[] @relation("OfferedCardItem")
+
+  @@index([ownerId, status, acquiredAt])
+  @@index([listingId, status])
+  @@map("card_items")
+}
+
+enum SaleListingStatus {
+  @@type("pg/text@1")
+
+  ON_SALE
+  SOLD_OUT
+  CANCELED
+}
+
+model SaleListing {
+  id                  Int                @id @default(autoincrement())
+  sellerId            Int                @map("seller_id")
+  photoCardId         Int                @map("photo_card_id")
+  saleQuantity        Int                @map("sale_quantity")
+  remainingQuantity   Int                @map("remaining_quantity")
+  price               Int
+  exchangeMethod      PhotoCardMethod    @map("exchange_method")
+  exchangeGenre       PhotoCardGenre     @map("exchange_genre")
+  exchangeDescription String             @map("exchange_description")
+  status              SaleListingStatus
+  createdAt           TimestamptzString  @default(now()) @map("created_at")
+  updatedAt           TimestamptzString  @default(now()) @map("updated_at")
+
+  cardItems CardItem[]
+  exchangeOffers ExchangeOffer[]
+
+  seller    User       @relation(fields: [sellerId], references: [id])
+  photoCard PhotoCard  @relation(fields: [photoCardId], references: [id])
+
+  @@check(expression: sql`"price" BETWEEN 1 AND 1000`, name: "sale_listings_price_range")
+  @@check(expression: sql`"remaining_quantity" >= 0`, name: "sale_listings_remaining_nonnegative")
+  @@index([status, createdAt])
+  @@index([status, price])
+  @@index([sellerId])
+  @@map("sale_listings")
+}
+
+enum ExchangeOfferStatus {
+  @@type("pg/text@1")
+
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELED
+}
+
+model ExchangeOffer {
+  id                Int                 @id @default(autoincrement())
+  listingId         Int                 @map("listing_id")
+  offererId         Int                 @map("offerer_id")
+  offeredCardItemId Int                 @map("offered_card_item_id")
+  description       String
+  status            ExchangeOfferStatus
+  createdAt         TimestamptzString   @default(now()) @map("created_at")
+
+  listing SaleListing @relation(fields: [listingId], references: [id])
+  offerer User @relation(fields: [offererId], references: [id])
+
+  offeredCardItem CardItem @relation(
+    "OfferedCardItem",
+    fields: [offeredCardItemId],
+    references: [id]
+  )
+
+  linkedCardItems CardItem[] @relation("CardItemOfferLink")
+
+  @@index([listingId, status])
+  @@index([offererId, status])
+  @@map("exchange_offers")
+}
+
+enum TradeType {
+  @@type("pg/text@1")
+
+  PURCHASE
+  EXCHANGE
+}
+
+model Trade {
+  id                  Int               @id @default(autoincrement())
+  type                TradeType
+  sellerId            Int               @map("seller_id")
+  counterpartId       Int               @map("counterpart_id")
+  photoCardId         Int               @map("photo_card_id")
+  receivedPhotoCardId Int?              @map("received_photo_card_id")
+  quantity            Int
+  points              Int
+  createdAt           TimestamptzString @default(now()) @map("created_at")
+
+  seller User @relation(
+    "TradeSeller",
+    fields: [sellerId],
+    references: [id]
+  )
+
+  counterpart User @relation(
+    "TradeCounterpart",
+    fields: [counterpartId],
+    references: [id]
+  )
+
+  photoCard PhotoCard @relation(
+    "TradePhotoCard",
+    fields: [photoCardId],
+    references: [id]
+  )
+
+  receivedPhotoCard PhotoCard? @relation(
+    "TradeReceivedPhotoCard",
+    fields: [receivedPhotoCardId],
+    references: [id]
+  )
+
+  @@index([sellerId, createdAt])
+  @@index([counterpartId, createdAt])
+  @@map("trades")
+}
+
+enum PointHistoryReason {
+  @@type("pg/text@1")
+
+  SIGNUP
+  PURCHASE
+  SALE
+  RANDOM
+}
+
+model PointHistory {
+  id             Int                @id @default(autoincrement())
+  userId         Int                @map("user_id")
+  amount         Int
+  reason         PointHistoryReason
+  balanceAfter   Int                @map("balance_after")
+  idempotencyKey String?            @map("idempotency_key")
+  createdAt      TimestamptzString  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@unique([userId, idempotencyKey])
+  @@map("point_histories")
+}
+
+enum NotificationType {
+  @@type("pg/text@1")
+
+  SIGNUP
+  OFFER_RECEIVED
+  OFFER_ACCEPTED
+  OFFER_REJECTED
+  PURCHASE_COMPLETED
+  SALE_COMPLETED
+  SOLD_OUT
+  LISTING_UPDATED
+}
+
+model Notification {
+  id        Int               @id @default(autoincrement())
+  userId    Int               @map("user_id")
+  type      NotificationType
+  message   String
+  link      String
+  isRead    Boolean           @map("is_read")
+  createdAt TimestamptzString @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+model RandomPointLog {
+  id           Int        @id @default(autoincrement())
+  userId       Int        @map("user_id")
+  drawDate     DateString @map("draw_date")
+  usedCount    Int        @map("used_count")
+  earnedPoints Int        @map("earned_points")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@check(expression: sql`"used_count" <= 3`, name: "random_point_logs_used_count_max")
+
+  @@unique([userId, drawDate])
+  @@map("random_point_logs")
+}
+
+model CreationLog {
+  id           Int    @id @default(autoincrement())
+  userId       Int    @map("user_id")
+  yearMonth    String @map("year_month")
+  createdCount Int    @map("created_count")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, yearMonth])
+  @@map("creation_logs")
 }

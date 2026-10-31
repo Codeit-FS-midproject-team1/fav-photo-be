@@ -4,6 +4,46 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "card_items": {
+      "model": "CardItem",
+      "namespace": "public"
+    },
+    "creation_logs": {
+      "model": "CreationLog",
+      "namespace": "public"
+    },
+    "exchange_offers": {
+      "model": "ExchangeOffer",
+      "namespace": "public"
+    },
+    "notifications": {
+      "model": "Notification",
+      "namespace": "public"
+    },
+    "photo_cards": {
+      "model": "PhotoCard",
+      "namespace": "public"
+    },
+    "point_histories": {
+      "model": "PointHistory",
+      "namespace": "public"
+    },
+    "random_point_logs": {
+      "model": "RandomPointLog",
+      "namespace": "public"
+    },
+    "refresh_tokens": {
+      "model": "RefreshToken",
+      "namespace": "public"
+    },
+    "sale_listings": {
+      "model": "SaleListing",
+      "namespace": "public"
+    },
+    "trades": {
+      "model": "Trade",
+      "namespace": "public"
+    },
     "users": {
       "model": "User",
       "namespace": "public"
@@ -12,7 +52,1519 @@
   "domain": {
     "namespaces": {
       "public": {
+        "enum": {
+          "CardItemStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "HELD",
+                "value": "HELD"
+              },
+              {
+                "name": "ON_SALE",
+                "value": "ON_SALE"
+              },
+              {
+                "name": "OFFERED",
+                "value": "OFFERED"
+              }
+            ]
+          },
+          "ExchangeOfferStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "ACCEPTED",
+                "value": "ACCEPTED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              },
+              {
+                "name": "CANCELED",
+                "value": "CANCELED"
+              }
+            ]
+          },
+          "NotificationType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "SIGNUP",
+                "value": "SIGNUP"
+              },
+              {
+                "name": "OFFER_RECEIVED",
+                "value": "OFFER_RECEIVED"
+              },
+              {
+                "name": "OFFER_ACCEPTED",
+                "value": "OFFER_ACCEPTED"
+              },
+              {
+                "name": "OFFER_REJECTED",
+                "value": "OFFER_REJECTED"
+              },
+              {
+                "name": "PURCHASE_COMPLETED",
+                "value": "PURCHASE_COMPLETED"
+              },
+              {
+                "name": "SALE_COMPLETED",
+                "value": "SALE_COMPLETED"
+              },
+              {
+                "name": "SOLD_OUT",
+                "value": "SOLD_OUT"
+              },
+              {
+                "name": "LISTING_UPDATED",
+                "value": "LISTING_UPDATED"
+              }
+            ]
+          },
+          "PhotoCardGenre": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "LANDSCAPE",
+                "value": "LANDSCAPE"
+              },
+              {
+                "name": "PORTRAIT",
+                "value": "PORTRAIT"
+              },
+              {
+                "name": "ANIMAL",
+                "value": "ANIMAL"
+              },
+              {
+                "name": "PLANT",
+                "value": "PLANT"
+              },
+              {
+                "name": "OBJECT",
+                "value": "OBJECT"
+              },
+              {
+                "name": "ETC",
+                "value": "ETC"
+              }
+            ]
+          },
+          "PhotoCardMethod": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PHOTO",
+                "value": "PHOTO"
+              },
+              {
+                "name": "CRAFT",
+                "value": "CRAFT"
+              },
+              {
+                "name": "AI",
+                "value": "AI"
+              },
+              {
+                "name": "ETC",
+                "value": "ETC"
+              }
+            ]
+          },
+          "PointHistoryReason": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "SIGNUP",
+                "value": "SIGNUP"
+              },
+              {
+                "name": "PURCHASE",
+                "value": "PURCHASE"
+              },
+              {
+                "name": "SALE",
+                "value": "SALE"
+              },
+              {
+                "name": "RANDOM",
+                "value": "RANDOM"
+              }
+            ]
+          },
+          "SaleListingStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ON_SALE",
+                "value": "ON_SALE"
+              },
+              {
+                "name": "SOLD_OUT",
+                "value": "SOLD_OUT"
+              },
+              {
+                "name": "CANCELED",
+                "value": "CANCELED"
+              }
+            ]
+          },
+          "TradeType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PURCHASE",
+                "value": "PURCHASE"
+              },
+              {
+                "name": "EXCHANGE",
+                "value": "EXCHANGE"
+              }
+            ]
+          }
+        },
         "models": {
+          "CardItem": {
+            "fields": {
+              "acquiredAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "listingId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "offerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "photoCardId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "CardItemStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "listing": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "listingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SaleListing",
+                  "namespace": "public"
+                }
+              },
+              "offer": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "offerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "ExchangeOffer",
+                  "namespace": "public"
+                }
+              },
+              "offeredInOffers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "offeredCardItemId"
+                  ]
+                },
+                "to": {
+                  "model": "ExchangeOffer",
+                  "namespace": "public"
+                }
+              },
+              "owner": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "ownerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "photoCard": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "photoCardId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "PhotoCard",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "acquiredAt": {
+                  "column": "acquired_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "listingId": {
+                  "column": "listing_id"
+                },
+                "offerId": {
+                  "column": "offer_id"
+                },
+                "ownerId": {
+                  "column": "owner_id"
+                },
+                "photoCardId": {
+                  "column": "photo_card_id"
+                },
+                "status": {
+                  "column": "status"
+                }
+              },
+              "namespaceId": "public",
+              "table": "card_items"
+            }
+          },
+          "CreationLog": {
+            "fields": {
+              "createdCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "yearMonth": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdCount": {
+                  "column": "created_count"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "userId": {
+                  "column": "user_id"
+                },
+                "yearMonth": {
+                  "column": "year_month"
+                }
+              },
+              "namespaceId": "public",
+              "table": "creation_logs"
+            }
+          },
+          "ExchangeOffer": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "listingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "offeredCardItemId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "offererId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ExchangeOfferStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "linkedCardItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "offerId"
+                  ]
+                },
+                "to": {
+                  "model": "CardItem",
+                  "namespace": "public"
+                }
+              },
+              "listing": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "listingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SaleListing",
+                  "namespace": "public"
+                }
+              },
+              "offeredCardItem": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "offeredCardItemId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "CardItem",
+                  "namespace": "public"
+                }
+              },
+              "offerer": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "offererId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "listingId": {
+                  "column": "listing_id"
+                },
+                "offeredCardItemId": {
+                  "column": "offered_card_item_id"
+                },
+                "offererId": {
+                  "column": "offerer_id"
+                },
+                "status": {
+                  "column": "status"
+                }
+              },
+              "namespaceId": "public",
+              "table": "exchange_offers"
+            }
+          },
+          "Notification": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isRead": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "link": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isRead": {
+                  "column": "is_read"
+                },
+                "link": {
+                  "column": "link"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "notifications"
+            }
+          },
+          "PhotoCard": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "creatorId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "genre": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PhotoCardGenre",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "imageUrl": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "method": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PhotoCardMethod",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "price": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "totalQuantity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "cardItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "photoCardId"
+                  ]
+                },
+                "to": {
+                  "model": "CardItem",
+                  "namespace": "public"
+                }
+              },
+              "creator": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "creatorId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "receivedInTrades": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "receivedPhotoCardId"
+                  ]
+                },
+                "to": {
+                  "model": "Trade",
+                  "namespace": "public"
+                }
+              },
+              "saleListings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "photoCardId"
+                  ]
+                },
+                "to": {
+                  "model": "SaleListing",
+                  "namespace": "public"
+                }
+              },
+              "tradedInTrades": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "photoCardId"
+                  ]
+                },
+                "to": {
+                  "model": "Trade",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "creatorId": {
+                  "column": "creator_id"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "genre": {
+                  "column": "genre"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "imageUrl": {
+                  "column": "image_url"
+                },
+                "method": {
+                  "column": "method"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "price": {
+                  "column": "price"
+                },
+                "totalQuantity": {
+                  "column": "total_quantity"
+                }
+              },
+              "namespaceId": "public",
+              "table": "photo_cards"
+            }
+          },
+          "PointHistory": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "balanceAfter": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "idempotencyKey": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reason": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PointHistoryReason",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "balanceAfter": {
+                  "column": "balance_after"
+                },
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "idempotencyKey": {
+                  "column": "idempotency_key"
+                },
+                "reason": {
+                  "column": "reason"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "point_histories"
+            }
+          },
+          "RandomPointLog": {
+            "fields": {
+              "drawDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "earnedPoints": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "usedCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "drawDate": {
+                  "column": "draw_date"
+                },
+                "earnedPoints": {
+                  "column": "earned_points"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "usedCount": {
+                  "column": "used_count"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "random_point_logs"
+            }
+          },
+          "RefreshToken": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tokenHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "expiresAt": {
+                  "column": "expires_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "tokenHash": {
+                  "column": "token_hash"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "refresh_tokens"
+            }
+          },
+          "SaleListing": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "exchangeDescription": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "exchangeGenre": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PhotoCardGenre",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "exchangeMethod": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PhotoCardMethod",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "photoCardId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "price": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "remainingQuantity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "saleQuantity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sellerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "SaleListingStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "cardItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "listingId"
+                  ]
+                },
+                "to": {
+                  "model": "CardItem",
+                  "namespace": "public"
+                }
+              },
+              "exchangeOffers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "listingId"
+                  ]
+                },
+                "to": {
+                  "model": "ExchangeOffer",
+                  "namespace": "public"
+                }
+              },
+              "photoCard": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "photoCardId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "PhotoCard",
+                  "namespace": "public"
+                }
+              },
+              "seller": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "sellerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "exchangeDescription": {
+                  "column": "exchange_description"
+                },
+                "exchangeGenre": {
+                  "column": "exchange_genre"
+                },
+                "exchangeMethod": {
+                  "column": "exchange_method"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "photoCardId": {
+                  "column": "photo_card_id"
+                },
+                "price": {
+                  "column": "price"
+                },
+                "remainingQuantity": {
+                  "column": "remaining_quantity"
+                },
+                "saleQuantity": {
+                  "column": "sale_quantity"
+                },
+                "sellerId": {
+                  "column": "seller_id"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updated_at"
+                }
+              },
+              "namespaceId": "public",
+              "table": "sale_listings"
+            }
+          },
+          "Trade": {
+            "fields": {
+              "counterpartId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "photoCardId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "points": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "quantity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "receivedPhotoCardId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sellerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "TradeType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "counterpart": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "counterpartId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "photoCard": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "photoCardId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "PhotoCard",
+                  "namespace": "public"
+                }
+              },
+              "receivedPhotoCard": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "receivedPhotoCardId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "PhotoCard",
+                  "namespace": "public"
+                }
+              },
+              "seller": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "sellerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "counterpartId": {
+                  "column": "counterpart_id"
+                },
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "photoCardId": {
+                  "column": "photo_card_id"
+                },
+                "points": {
+                  "column": "points"
+                },
+                "quantity": {
+                  "column": "quantity"
+                },
+                "receivedPhotoCardId": {
+                  "column": "received_photo_card_id"
+                },
+                "sellerId": {
+                  "column": "seller_id"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "trades"
+            }
+          },
           "User": {
             "fields": {
               "createdAt": {
@@ -72,7 +1624,173 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "counterpartTrades": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "counterpartId"
+                  ]
+                },
+                "to": {
+                  "model": "Trade",
+                  "namespace": "public"
+                }
+              },
+              "createdPhotoCards": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "creatorId"
+                  ]
+                },
+                "to": {
+                  "model": "PhotoCard",
+                  "namespace": "public"
+                }
+              },
+              "creationLogs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "CreationLog",
+                  "namespace": "public"
+                }
+              },
+              "exchangeOffers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "offererId"
+                  ]
+                },
+                "to": {
+                  "model": "ExchangeOffer",
+                  "namespace": "public"
+                }
+              },
+              "notifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
+              "ownedCardItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "ownerId"
+                  ]
+                },
+                "to": {
+                  "model": "CardItem",
+                  "namespace": "public"
+                }
+              },
+              "pointHistories": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "PointHistory",
+                  "namespace": "public"
+                }
+              },
+              "randomPointLogs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "RandomPointLog",
+                  "namespace": "public"
+                }
+              },
+              "refreshTokens": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "RefreshToken",
+                  "namespace": "public"
+                }
+              },
+              "saleListings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "sellerId"
+                  ]
+                },
+                "to": {
+                  "model": "SaleListing",
+                  "namespace": "public"
+                }
+              },
+              "sellerTrades": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "sellerId"
+                  ]
+                },
+                "to": {
+                  "model": "Trade",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "createdAt": {
@@ -113,7 +1831,1368 @@
       "public": {
         "entries": {
           "table": {
+            "card_items": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('HELD', 'ON_SALE', 'OFFERED')",
+                  "name": "card_items_status_check_80844175",
+                  "prefix": "card_items_status_check"
+                }
+              ],
+              "columns": {
+                "acquired_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "listing_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "offer_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "owner_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "photo_card_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "CardItemStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "card_items_photo_card_id_idx_92021706"
+                  },
+                  "source": {
+                    "columns": [
+                      "photo_card_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "card_items"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "photo_cards"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "card_items_owner_id_idx_ade9f347"
+                  },
+                  "source": {
+                    "columns": [
+                      "owner_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "card_items"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "card_items_listing_id_idx_087601b6"
+                  },
+                  "source": {
+                    "columns": [
+                      "listing_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "card_items"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "sale_listings"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "card_items_offer_id_idx_f8c71ed4"
+                  },
+                  "source": {
+                    "columns": [
+                      "offer_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "card_items"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "exchange_offers"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "listing_id"
+                  ],
+                  "name": "card_items_listing_id_idx_087601b6",
+                  "prefix": "card_items_listing_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "listing_id",
+                    "status"
+                  ],
+                  "name": "card_items_listing_id_status_idx_b6a259da",
+                  "prefix": "card_items_listing_id_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "offer_id"
+                  ],
+                  "name": "card_items_offer_id_idx_f8c71ed4",
+                  "prefix": "card_items_offer_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "owner_id"
+                  ],
+                  "name": "card_items_owner_id_idx_ade9f347",
+                  "prefix": "card_items_owner_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "owner_id",
+                    "status",
+                    "acquired_at"
+                  ],
+                  "name": "card_items_owner_id_status_acquired_at_idx_96b6f48d",
+                  "prefix": "card_items_owner_id_status_acquired_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "photo_card_id"
+                  ],
+                  "name": "card_items_photo_card_id_idx_92021706",
+                  "prefix": "card_items_photo_card_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "creation_logs": {
+              "columns": {
+                "created_count": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "year_month": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "creation_logs_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "creation_logs"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "creation_logs_user_id_idx_6c952402",
+                  "prefix": "creation_logs_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "user_id",
+                    "year_month"
+                  ]
+                }
+              ]
+            },
+            "exchange_offers": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'ACCEPTED', 'REJECTED', 'CANCELED')",
+                  "name": "exchange_offers_status_check_d2074f89",
+                  "prefix": "exchange_offers_status_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "listing_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "offered_card_item_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "offerer_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ExchangeOfferStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "exchange_offers_listing_id_idx_087601b6"
+                  },
+                  "source": {
+                    "columns": [
+                      "listing_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "exchange_offers"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "sale_listings"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "exchange_offers_offerer_id_idx_83b0edee"
+                  },
+                  "source": {
+                    "columns": [
+                      "offerer_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "exchange_offers"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "exchange_offers_offered_card_item_id_idx_46740d09"
+                  },
+                  "source": {
+                    "columns": [
+                      "offered_card_item_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "exchange_offers"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "card_items"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "listing_id"
+                  ],
+                  "name": "exchange_offers_listing_id_idx_087601b6",
+                  "prefix": "exchange_offers_listing_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "listing_id",
+                    "status"
+                  ],
+                  "name": "exchange_offers_listing_id_status_idx_b6a259da",
+                  "prefix": "exchange_offers_listing_id_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "offered_card_item_id"
+                  ],
+                  "name": "exchange_offers_offered_card_item_id_idx_46740d09",
+                  "prefix": "exchange_offers_offered_card_item_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "offerer_id"
+                  ],
+                  "name": "exchange_offers_offerer_id_idx_83b0edee",
+                  "prefix": "exchange_offers_offerer_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "offerer_id",
+                    "status"
+                  ],
+                  "name": "exchange_offers_offerer_id_status_idx_8336bfd3",
+                  "prefix": "exchange_offers_offerer_id_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "notifications": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('SIGNUP', 'OFFER_RECEIVED', 'OFFER_ACCEPTED', 'OFFER_REJECTED', 'PURCHASE_COMPLETED', 'SALE_COMPLETED', 'SOLD_OUT', 'LISTING_UPDATED')",
+                  "name": "notifications_type_check_d9525f4c",
+                  "prefix": "notifications_type_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "is_read": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "nullable": false
+                },
+                "link": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "notifications_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "notifications"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id",
+                    "created_at"
+                  ],
+                  "name": "notifications_user_id_created_at_idx_b562028f",
+                  "prefix": "notifications_user_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "notifications_user_id_idx_6c952402",
+                  "prefix": "notifications_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "photo_cards": {
+              "checks": [
+                {
+                  "expression": "\"genre\" IN ('LANDSCAPE', 'PORTRAIT', 'ANIMAL', 'PLANT', 'OBJECT', 'ETC')",
+                  "name": "photo_cards_genre_check_6cc1e4b5",
+                  "prefix": "photo_cards_genre_check"
+                },
+                {
+                  "expression": "\"method\" IN ('PHOTO', 'CRAFT', 'AI', 'ETC')",
+                  "name": "photo_cards_method_check_9a7762d3",
+                  "prefix": "photo_cards_method_check"
+                },
+                {
+                  "expression": "\"price\" BETWEEN 1 AND 1000",
+                  "name": "photo_cards_price_range_c521b70e",
+                  "prefix": "photo_cards_price_range"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "creator_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "genre": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PhotoCardGenre",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "image_url": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "method": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PhotoCardMethod",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "price": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "total_quantity": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "photo_cards_creator_id_idx_c8bab67a"
+                  },
+                  "source": {
+                    "columns": [
+                      "creator_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "photo_cards"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "creator_id"
+                  ],
+                  "name": "photo_cards_creator_id_idx_c8bab67a",
+                  "prefix": "photo_cards_creator_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "point_histories": {
+              "checks": [
+                {
+                  "expression": "\"reason\" IN ('SIGNUP', 'PURCHASE', 'SALE', 'RANDOM')",
+                  "name": "point_histories_reason_check_dbb7e44f",
+                  "prefix": "point_histories_reason_check"
+                }
+              ],
+              "columns": {
+                "amount": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "balance_after": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "idempotency_key": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "reason": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PointHistoryReason",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "point_histories_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "point_histories"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id",
+                    "created_at"
+                  ],
+                  "name": "point_histories_user_id_created_at_idx_b562028f",
+                  "prefix": "point_histories_user_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "point_histories_user_id_idx_6c952402",
+                  "prefix": "point_histories_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "user_id",
+                    "idempotency_key"
+                  ]
+                }
+              ]
+            },
+            "random_point_logs": {
+              "checks": [
+                {
+                  "expression": "\"used_count\" <= 3",
+                  "name": "random_point_logs_used_count_max_2835319b",
+                  "prefix": "random_point_logs_used_count_max"
+                }
+              ],
+              "columns": {
+                "draw_date": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": false
+                },
+                "earned_points": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "used_count": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "random_point_logs_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "random_point_logs"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "random_point_logs_user_id_idx_6c952402",
+                  "prefix": "random_point_logs_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "user_id",
+                    "draw_date"
+                  ]
+                }
+              ]
+            },
+            "refresh_tokens": {
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "expires_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "token_hash": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "user_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "refresh_tokens_user_id_idx_6c952402"
+                  },
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "refresh_tokens"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "refresh_tokens_user_id_idx_6c952402",
+                  "prefix": "refresh_tokens_user_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "token_hash"
+                  ]
+                }
+              ]
+            },
+            "sale_listings": {
+              "checks": [
+                {
+                  "expression": "\"exchange_genre\" IN ('LANDSCAPE', 'PORTRAIT', 'ANIMAL', 'PLANT', 'OBJECT', 'ETC')",
+                  "name": "sale_listings_exchange_genre_check_5fe27ace",
+                  "prefix": "sale_listings_exchange_genre_check"
+                },
+                {
+                  "expression": "\"exchange_method\" IN ('PHOTO', 'CRAFT', 'AI', 'ETC')",
+                  "name": "sale_listings_exchange_method_check_ca76d0b3",
+                  "prefix": "sale_listings_exchange_method_check"
+                },
+                {
+                  "expression": "\"price\" BETWEEN 1 AND 1000",
+                  "name": "sale_listings_price_range_c521b70e",
+                  "prefix": "sale_listings_price_range"
+                },
+                {
+                  "expression": "\"remaining_quantity\" >= 0",
+                  "name": "sale_listings_remaining_nonnegative_1012e92c",
+                  "prefix": "sale_listings_remaining_nonnegative"
+                },
+                {
+                  "expression": "\"status\" IN ('ON_SALE', 'SOLD_OUT', 'CANCELED')",
+                  "name": "sale_listings_status_check_32a7d91e",
+                  "prefix": "sale_listings_status_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "exchange_description": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "exchange_genre": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PhotoCardGenre",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "exchange_method": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PhotoCardMethod",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "photo_card_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "price": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "remaining_quantity": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "sale_quantity": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "seller_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "SaleListingStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updated_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "sale_listings_seller_id_idx_de05cd59"
+                  },
+                  "source": {
+                    "columns": [
+                      "seller_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "sale_listings"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "sale_listings_photo_card_id_idx_92021706"
+                  },
+                  "source": {
+                    "columns": [
+                      "photo_card_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "sale_listings"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "photo_cards"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "photo_card_id"
+                  ],
+                  "name": "sale_listings_photo_card_id_idx_92021706",
+                  "prefix": "sale_listings_photo_card_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "seller_id"
+                  ],
+                  "name": "sale_listings_seller_id_idx_de05cd59",
+                  "prefix": "sale_listings_seller_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status",
+                    "created_at"
+                  ],
+                  "name": "sale_listings_status_created_at_idx_1bbe8adf",
+                  "prefix": "sale_listings_status_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status",
+                    "price"
+                  ],
+                  "name": "sale_listings_status_price_idx_d94abea6",
+                  "prefix": "sale_listings_status_price_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "trades": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('PURCHASE', 'EXCHANGE')",
+                  "name": "trades_type_check_e811fb8e",
+                  "prefix": "trades_type_check"
+                }
+              ],
+              "columns": {
+                "counterpart_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "photo_card_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "points": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "quantity": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "received_photo_card_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "seller_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TradeType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "trades_seller_id_idx_de05cd59"
+                  },
+                  "source": {
+                    "columns": [
+                      "seller_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "trades"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "trades_counterpart_id_idx_7924248e"
+                  },
+                  "source": {
+                    "columns": [
+                      "counterpart_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "trades"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "trades_photo_card_id_idx_92021706"
+                  },
+                  "source": {
+                    "columns": [
+                      "photo_card_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "trades"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "photo_cards"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "trades_received_photo_card_id_idx_98089ed0"
+                  },
+                  "source": {
+                    "columns": [
+                      "received_photo_card_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "trades"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "photo_cards"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "counterpart_id",
+                    "created_at"
+                  ],
+                  "name": "trades_counterpart_id_created_at_idx_8090177a",
+                  "prefix": "trades_counterpart_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "counterpart_id"
+                  ],
+                  "name": "trades_counterpart_id_idx_7924248e",
+                  "prefix": "trades_counterpart_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "photo_card_id"
+                  ],
+                  "name": "trades_photo_card_id_idx_92021706",
+                  "prefix": "trades_photo_card_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "received_photo_card_id"
+                  ],
+                  "name": "trades_received_photo_card_id_idx_98089ed0",
+                  "prefix": "trades_received_photo_card_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "seller_id",
+                    "created_at"
+                  ],
+                  "name": "trades_seller_id_created_at_idx_c796964a",
+                  "prefix": "trades_seller_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "seller_id"
+                  ],
+                  "name": "trades_seller_id_idx_de05cd59",
+                  "prefix": "trades_seller_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "users": {
+              "checks": [
+                {
+                  "expression": "\"points\" >= 0",
+                  "name": "users_points_nonnegative_2f2703ae",
+                  "prefix": "users_points_nonnegative"
+                }
+              ],
               "columns": {
                 "created_at": {
                   "codecId": "pg/timestamptz-string@1",
@@ -193,13 +3272,89 @@
                 }
               ]
             }
+          },
+          "valueSet": {
+            "CardItemStatus": {
+              "kind": "valueSet",
+              "values": [
+                "HELD",
+                "ON_SALE",
+                "OFFERED"
+              ]
+            },
+            "ExchangeOfferStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "ACCEPTED",
+                "REJECTED",
+                "CANCELED"
+              ]
+            },
+            "NotificationType": {
+              "kind": "valueSet",
+              "values": [
+                "SIGNUP",
+                "OFFER_RECEIVED",
+                "OFFER_ACCEPTED",
+                "OFFER_REJECTED",
+                "PURCHASE_COMPLETED",
+                "SALE_COMPLETED",
+                "SOLD_OUT",
+                "LISTING_UPDATED"
+              ]
+            },
+            "PhotoCardGenre": {
+              "kind": "valueSet",
+              "values": [
+                "LANDSCAPE",
+                "PORTRAIT",
+                "ANIMAL",
+                "PLANT",
+                "OBJECT",
+                "ETC"
+              ]
+            },
+            "PhotoCardMethod": {
+              "kind": "valueSet",
+              "values": [
+                "PHOTO",
+                "CRAFT",
+                "AI",
+                "ETC"
+              ]
+            },
+            "PointHistoryReason": {
+              "kind": "valueSet",
+              "values": [
+                "SIGNUP",
+                "PURCHASE",
+                "SALE",
+                "RANDOM"
+              ]
+            },
+            "SaleListingStatus": {
+              "kind": "valueSet",
+              "values": [
+                "ON_SALE",
+                "SOLD_OUT",
+                "CANCELED"
+              ]
+            },
+            "TradeType": {
+              "kind": "valueSet",
+              "values": [
+                "PURCHASE",
+                "EXCHANGE"
+              ]
+            }
           }
         },
         "id": "public",
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "756ed2dcf16da89ab00e43c5e9560d2d4efd577d952e726dc07267eb250c6889"
+    "storageHash": "41aa984e5f165b05d5903dde2d2ddf8724395c7f5ccda76b1957c54b05bdddfe"
   },
   "capabilities": {
     "postgres": {

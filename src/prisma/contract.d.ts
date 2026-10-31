@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'756ed2dcf16da89ab00e43c5e9560d2d4efd577d952e726dc07267eb250c6889'>;
+  StorageHashBase<'41aa984e5f165b05d5903dde2d2ddf8724395c7f5ccda76b1957c54b05bdddfe'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -233,6 +233,107 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly CardItem: {
+      readonly acquiredAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listingId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly offerId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['output'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'HELD' | 'ON_SALE' | 'OFFERED';
+    };
+    readonly CreationLog: {
+      readonly createdCount: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+      readonly yearMonth: CodecTypes['pg/text@1']['output'];
+    };
+    readonly ExchangeOffer: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listingId: CodecTypes['pg/int4@1']['output'];
+      readonly offeredCardItemId: CodecTypes['pg/int4@1']['output'];
+      readonly offererId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+    };
+    readonly Notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isRead: CodecTypes['pg/bool@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly PhotoCard: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly creatorId: CodecTypes['pg/int4@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly imageUrl: CodecTypes['pg/text@1']['output'];
+      readonly method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly price: CodecTypes['pg/int4@1']['output'];
+      readonly totalQuantity: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly PointHistory: {
+      readonly amount: CodecTypes['pg/int4@1']['output'];
+      readonly balanceAfter: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly idempotencyKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly RandomPointLog: {
+      readonly drawDate: CodecTypes['pg/date-string@1']['output'];
+      readonly earnedPoints: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly usedCount: CodecTypes['pg/int4@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly RefreshToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly tokenHash: CodecTypes['pg/text@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly SaleListing: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly exchangeDescription: CodecTypes['pg/text@1']['output'];
+      readonly exchangeGenre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly exchangeMethod: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['output'];
+      readonly price: CodecTypes['pg/int4@1']['output'];
+      readonly remainingQuantity: CodecTypes['pg/int4@1']['output'];
+      readonly saleQuantity: CodecTypes['pg/int4@1']['output'];
+      readonly sellerId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'ON_SALE' | 'SOLD_OUT' | 'CANCELED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly Trade: {
+      readonly counterpartId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['output'];
+      readonly points: CodecTypes['pg/int4@1']['output'];
+      readonly quantity: CodecTypes['pg/int4@1']['output'];
+      readonly receivedPhotoCardId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly sellerId: CodecTypes['pg/int4@1']['output'];
+      readonly type: 'PURCHASE' | 'EXCHANGE';
+    };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -247,6 +348,107 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly CardItem: {
+      readonly acquiredAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listingId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly offerId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['input'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'HELD' | 'ON_SALE' | 'OFFERED';
+    };
+    readonly CreationLog: {
+      readonly createdCount: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+      readonly yearMonth: CodecTypes['pg/text@1']['input'];
+    };
+    readonly ExchangeOffer: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listingId: CodecTypes['pg/int4@1']['input'];
+      readonly offeredCardItemId: CodecTypes['pg/int4@1']['input'];
+      readonly offererId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+    };
+    readonly Notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isRead: CodecTypes['pg/bool@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly PhotoCard: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly creatorId: CodecTypes['pg/int4@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly imageUrl: CodecTypes['pg/text@1']['input'];
+      readonly method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly price: CodecTypes['pg/int4@1']['input'];
+      readonly totalQuantity: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly PointHistory: {
+      readonly amount: CodecTypes['pg/int4@1']['input'];
+      readonly balanceAfter: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly idempotencyKey: CodecTypes['pg/text@1']['input'] | null;
+      readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly RandomPointLog: {
+      readonly drawDate: CodecTypes['pg/date-string@1']['input'];
+      readonly earnedPoints: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly usedCount: CodecTypes['pg/int4@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly RefreshToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly tokenHash: CodecTypes['pg/text@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly SaleListing: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly exchangeDescription: CodecTypes['pg/text@1']['input'];
+      readonly exchangeGenre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly exchangeMethod: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['input'];
+      readonly price: CodecTypes['pg/int4@1']['input'];
+      readonly remainingQuantity: CodecTypes['pg/int4@1']['input'];
+      readonly saleQuantity: CodecTypes['pg/int4@1']['input'];
+      readonly sellerId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'ON_SALE' | 'SOLD_OUT' | 'CANCELED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly Trade: {
+      readonly counterpartId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly photoCardId: CodecTypes['pg/int4@1']['input'];
+      readonly points: CodecTypes['pg/int4@1']['input'];
+      readonly quantity: CodecTypes['pg/int4@1']['input'];
+      readonly receivedPhotoCardId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly sellerId: CodecTypes['pg/int4@1']['input'];
+      readonly type: 'PURCHASE' | 'EXCHANGE';
+    };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -261,6 +463,107 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly card_items: {
+      readonly acquired_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listing_id: CodecTypes['pg/int4@1']['output'] | null;
+      readonly offer_id: CodecTypes['pg/int4@1']['output'] | null;
+      readonly owner_id: CodecTypes['pg/int4@1']['output'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'HELD' | 'ON_SALE' | 'OFFERED';
+    };
+    readonly creation_logs: {
+      readonly created_count: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+      readonly year_month: CodecTypes['pg/text@1']['output'];
+    };
+    readonly exchange_offers: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listing_id: CodecTypes['pg/int4@1']['output'];
+      readonly offered_card_item_id: CodecTypes['pg/int4@1']['output'];
+      readonly offerer_id: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+    };
+    readonly notifications: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly is_read: CodecTypes['pg/bool@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly photo_cards: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly creator_id: CodecTypes['pg/int4@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly image_url: CodecTypes['pg/text@1']['output'];
+      readonly method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly price: CodecTypes['pg/int4@1']['output'];
+      readonly total_quantity: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly point_histories: {
+      readonly amount: CodecTypes['pg/int4@1']['output'];
+      readonly balance_after: CodecTypes['pg/int4@1']['output'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly idempotency_key: CodecTypes['pg/text@1']['output'] | null;
+      readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly random_point_logs: {
+      readonly draw_date: CodecTypes['pg/date-string@1']['output'];
+      readonly earned_points: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly used_count: CodecTypes['pg/int4@1']['output'];
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly refresh_tokens: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly token_hash: CodecTypes['pg/text@1']['output'];
+      readonly user_id: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly sale_listings: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly exchange_description: CodecTypes['pg/text@1']['output'];
+      readonly exchange_genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly exchange_method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['output'];
+      readonly price: CodecTypes['pg/int4@1']['output'];
+      readonly remaining_quantity: CodecTypes['pg/int4@1']['output'];
+      readonly sale_quantity: CodecTypes['pg/int4@1']['output'];
+      readonly seller_id: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'ON_SALE' | 'SOLD_OUT' | 'CANCELED';
+      readonly updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly trades: {
+      readonly counterpart_id: CodecTypes['pg/int4@1']['output'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['output'];
+      readonly points: CodecTypes['pg/int4@1']['output'];
+      readonly quantity: CodecTypes['pg/int4@1']['output'];
+      readonly received_photo_card_id: CodecTypes['pg/int4@1']['output'] | null;
+      readonly seller_id: CodecTypes['pg/int4@1']['output'];
+      readonly type: 'PURCHASE' | 'EXCHANGE';
+    };
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -275,6 +578,107 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly card_items: {
+      readonly acquired_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listing_id: CodecTypes['pg/int4@1']['input'] | null;
+      readonly offer_id: CodecTypes['pg/int4@1']['input'] | null;
+      readonly owner_id: CodecTypes['pg/int4@1']['input'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'HELD' | 'ON_SALE' | 'OFFERED';
+    };
+    readonly creation_logs: {
+      readonly created_count: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+      readonly year_month: CodecTypes['pg/text@1']['input'];
+    };
+    readonly exchange_offers: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listing_id: CodecTypes['pg/int4@1']['input'];
+      readonly offered_card_item_id: CodecTypes['pg/int4@1']['input'];
+      readonly offerer_id: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+    };
+    readonly notifications: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly is_read: CodecTypes['pg/bool@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly type:
+        | 'SIGNUP'
+        | 'OFFER_RECEIVED'
+        | 'OFFER_ACCEPTED'
+        | 'OFFER_REJECTED'
+        | 'PURCHASE_COMPLETED'
+        | 'SALE_COMPLETED'
+        | 'SOLD_OUT'
+        | 'LISTING_UPDATED';
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly photo_cards: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly creator_id: CodecTypes['pg/int4@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly image_url: CodecTypes['pg/text@1']['input'];
+      readonly method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly price: CodecTypes['pg/int4@1']['input'];
+      readonly total_quantity: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly point_histories: {
+      readonly amount: CodecTypes['pg/int4@1']['input'];
+      readonly balance_after: CodecTypes['pg/int4@1']['input'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly idempotency_key: CodecTypes['pg/text@1']['input'] | null;
+      readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly random_point_logs: {
+      readonly draw_date: CodecTypes['pg/date-string@1']['input'];
+      readonly earned_points: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly used_count: CodecTypes['pg/int4@1']['input'];
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly refresh_tokens: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly token_hash: CodecTypes['pg/text@1']['input'];
+      readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly sale_listings: {
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly exchange_description: CodecTypes['pg/text@1']['input'];
+      readonly exchange_genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+      readonly exchange_method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['input'];
+      readonly price: CodecTypes['pg/int4@1']['input'];
+      readonly remaining_quantity: CodecTypes['pg/int4@1']['input'];
+      readonly sale_quantity: CodecTypes['pg/int4@1']['input'];
+      readonly seller_id: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'ON_SALE' | 'SOLD_OUT' | 'CANCELED';
+      readonly updated_at: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly trades: {
+      readonly counterpart_id: CodecTypes['pg/int4@1']['input'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly photo_card_id: CodecTypes['pg/int4@1']['input'];
+      readonly points: CodecTypes['pg/int4@1']['input'];
+      readonly quantity: CodecTypes['pg/int4@1']['input'];
+      readonly received_photo_card_id: CodecTypes['pg/int4@1']['input'] | null;
+      readonly seller_id: CodecTypes['pg/int4@1']['input'];
+      readonly type: 'PURCHASE' | 'EXCHANGE';
+    };
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -289,6 +693,145 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
+  export type public_CardItem = {
+    acquiredAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    listingId: CodecTypes['pg/int4@1']['output'] | null;
+    offerId: CodecTypes['pg/int4@1']['output'] | null;
+    ownerId: CodecTypes['pg/int4@1']['output'];
+    photoCardId: CodecTypes['pg/int4@1']['output'];
+    status: 'HELD' | 'ON_SALE' | 'OFFERED';
+    listing: public_SaleListing | null;
+    offer: public_ExchangeOffer | null;
+    offeredInOffers: public_ExchangeOffer[];
+    owner: public_User;
+    photoCard: public_PhotoCard;
+    readonly [RelationKeys]?: 'listing' | 'offer' | 'offeredInOffers' | 'owner' | 'photoCard';
+  };
+  export type public_CreationLog = {
+    createdCount: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    userId: CodecTypes['pg/int4@1']['output'];
+    yearMonth: CodecTypes['pg/text@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
+  export type public_ExchangeOffer = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    description: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    listingId: CodecTypes['pg/int4@1']['output'];
+    offeredCardItemId: CodecTypes['pg/int4@1']['output'];
+    offererId: CodecTypes['pg/int4@1']['output'];
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+    linkedCardItems: public_CardItem[];
+    listing: public_SaleListing;
+    offeredCardItem: public_CardItem;
+    offerer: public_User;
+    readonly [RelationKeys]?: 'linkedCardItems' | 'listing' | 'offeredCardItem' | 'offerer';
+  };
+  export type public_Notification = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isRead: CodecTypes['pg/bool@1']['output'];
+    link: CodecTypes['pg/text@1']['output'];
+    message: CodecTypes['pg/text@1']['output'];
+    type:
+      | 'SIGNUP'
+      | 'OFFER_RECEIVED'
+      | 'OFFER_ACCEPTED'
+      | 'OFFER_REJECTED'
+      | 'PURCHASE_COMPLETED'
+      | 'SALE_COMPLETED'
+      | 'SOLD_OUT'
+      | 'LISTING_UPDATED';
+    userId: CodecTypes['pg/int4@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
+  export type public_PhotoCard = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    creatorId: CodecTypes['pg/int4@1']['output'];
+    description: CodecTypes['pg/text@1']['output'];
+    genre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+    id: CodecTypes['pg/int4@1']['output'];
+    imageUrl: CodecTypes['pg/text@1']['output'];
+    method: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+    name: CodecTypes['pg/text@1']['output'];
+    price: CodecTypes['pg/int4@1']['output'];
+    totalQuantity: CodecTypes['pg/int4@1']['output'];
+    cardItems: public_CardItem[];
+    creator: public_User;
+    receivedInTrades: public_Trade[];
+    saleListings: public_SaleListing[];
+    tradedInTrades: public_Trade[];
+    readonly [RelationKeys]?:
+      'cardItems' | 'creator' | 'receivedInTrades' | 'saleListings' | 'tradedInTrades';
+  };
+  export type public_PointHistory = {
+    amount: CodecTypes['pg/int4@1']['output'];
+    balanceAfter: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    idempotencyKey: CodecTypes['pg/text@1']['output'] | null;
+    reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
+    userId: CodecTypes['pg/int4@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
+  export type public_RandomPointLog = {
+    drawDate: CodecTypes['pg/date-string@1']['output'];
+    earnedPoints: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    usedCount: CodecTypes['pg/int4@1']['output'];
+    userId: CodecTypes['pg/int4@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
+  export type public_RefreshToken = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    tokenHash: CodecTypes['pg/text@1']['output'];
+    userId: CodecTypes['pg/int4@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
+  export type public_SaleListing = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    exchangeDescription: CodecTypes['pg/text@1']['output'];
+    exchangeGenre: 'LANDSCAPE' | 'PORTRAIT' | 'ANIMAL' | 'PLANT' | 'OBJECT' | 'ETC';
+    exchangeMethod: 'PHOTO' | 'CRAFT' | 'AI' | 'ETC';
+    id: CodecTypes['pg/int4@1']['output'];
+    photoCardId: CodecTypes['pg/int4@1']['output'];
+    price: CodecTypes['pg/int4@1']['output'];
+    remainingQuantity: CodecTypes['pg/int4@1']['output'];
+    saleQuantity: CodecTypes['pg/int4@1']['output'];
+    sellerId: CodecTypes['pg/int4@1']['output'];
+    status: 'ON_SALE' | 'SOLD_OUT' | 'CANCELED';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    cardItems: public_CardItem[];
+    exchangeOffers: public_ExchangeOffer[];
+    photoCard: public_PhotoCard;
+    seller: public_User;
+    readonly [RelationKeys]?: 'cardItems' | 'exchangeOffers' | 'photoCard' | 'seller';
+  };
+  export type public_Trade = {
+    counterpartId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    photoCardId: CodecTypes['pg/int4@1']['output'];
+    points: CodecTypes['pg/int4@1']['output'];
+    quantity: CodecTypes['pg/int4@1']['output'];
+    receivedPhotoCardId: CodecTypes['pg/int4@1']['output'] | null;
+    sellerId: CodecTypes['pg/int4@1']['output'];
+    type: 'PURCHASE' | 'EXCHANGE';
+    counterpart: public_User;
+    photoCard: public_PhotoCard;
+    receivedPhotoCard: public_PhotoCard | null;
+    seller: public_User;
+    readonly [RelationKeys]?: 'counterpart' | 'photoCard' | 'receivedPhotoCard' | 'seller';
+  };
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -298,12 +841,44 @@ export namespace Models {
     nickname: CodecTypes['pg/text@1']['output'];
     password: CodecTypes['pg/text@1']['output'] | null;
     points: CodecTypes['pg/int4@1']['output'];
-    readonly [RelationKeys]?: never;
+    counterpartTrades: public_Trade[];
+    createdPhotoCards: public_PhotoCard[];
+    creationLogs: public_CreationLog[];
+    exchangeOffers: public_ExchangeOffer[];
+    notifications: public_Notification[];
+    ownedCardItems: public_CardItem[];
+    pointHistories: public_PointHistory[];
+    randomPointLogs: public_RandomPointLog[];
+    refreshTokens: public_RefreshToken[];
+    saleListings: public_SaleListing[];
+    sellerTrades: public_Trade[];
+    readonly [RelationKeys]?:
+      | 'counterpartTrades'
+      | 'createdPhotoCards'
+      | 'creationLogs'
+      | 'exchangeOffers'
+      | 'notifications'
+      | 'ownedCardItems'
+      | 'pointHistories'
+      | 'randomPointLogs'
+      | 'refreshTokens'
+      | 'saleListings'
+      | 'sellerTrades';
   };
 }
 
 export declare const models: {
   public: {
+    CardItem: Models.public_CardItem;
+    CreationLog: Models.public_CreationLog;
+    ExchangeOffer: Models.public_ExchangeOffer;
+    Notification: Models.public_Notification;
+    PhotoCard: Models.public_PhotoCard;
+    PointHistory: Models.public_PointHistory;
+    RandomPointLog: Models.public_RandomPointLog;
+    RefreshToken: Models.public_RefreshToken;
+    SaleListing: Models.public_SaleListing;
+    Trade: Models.public_Trade;
     User: Models.public_User;
   };
 };
@@ -326,6 +901,994 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly card_items: {
+              columns: {
+                readonly acquired_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly listing_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly offer_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly owner_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly photo_card_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'card_items_listing_id_idx_087601b6';
+                  readonly prefix: 'card_items_listing_id_idx';
+                  readonly columns: readonly ['listing_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'card_items_listing_id_status_idx_b6a259da';
+                  readonly prefix: 'card_items_listing_id_status_idx';
+                  readonly columns: readonly ['listing_id', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'card_items_offer_id_idx_f8c71ed4';
+                  readonly prefix: 'card_items_offer_id_idx';
+                  readonly columns: readonly ['offer_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'card_items_owner_id_idx_ade9f347';
+                  readonly prefix: 'card_items_owner_id_idx';
+                  readonly columns: readonly ['owner_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'card_items_owner_id_status_acquired_at_idx_96b6f48d';
+                  readonly prefix: 'card_items_owner_id_status_acquired_at_idx';
+                  readonly columns: readonly ['owner_id', 'status', 'acquired_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'card_items_photo_card_id_idx_92021706';
+                  readonly prefix: 'card_items_photo_card_id_idx';
+                  readonly columns: readonly ['photo_card_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'card_items';
+                    readonly columns: readonly ['photo_card_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'photo_cards';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'card_items';
+                    readonly columns: readonly ['owner_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'card_items';
+                    readonly columns: readonly ['listing_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'sale_listings';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'card_items';
+                    readonly columns: readonly ['offer_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'exchange_offers';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly creation_logs: {
+              columns: {
+                readonly created_count: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly year_month: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['user_id', 'year_month'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'creation_logs_user_id_idx_6c952402';
+                  readonly prefix: 'creation_logs_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'creation_logs';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly exchange_offers: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly description: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly listing_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly offered_card_item_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly offerer_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'exchange_offers_listing_id_idx_087601b6';
+                  readonly prefix: 'exchange_offers_listing_id_idx';
+                  readonly columns: readonly ['listing_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'exchange_offers_listing_id_status_idx_b6a259da';
+                  readonly prefix: 'exchange_offers_listing_id_status_idx';
+                  readonly columns: readonly ['listing_id', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'exchange_offers_offered_card_item_id_idx_46740d09';
+                  readonly prefix: 'exchange_offers_offered_card_item_id_idx';
+                  readonly columns: readonly ['offered_card_item_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'exchange_offers_offerer_id_idx_83b0edee';
+                  readonly prefix: 'exchange_offers_offerer_id_idx';
+                  readonly columns: readonly ['offerer_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'exchange_offers_offerer_id_status_idx_8336bfd3';
+                  readonly prefix: 'exchange_offers_offerer_id_status_idx';
+                  readonly columns: readonly ['offerer_id', 'status'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'exchange_offers';
+                    readonly columns: readonly ['listing_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'sale_listings';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'exchange_offers';
+                    readonly columns: readonly ['offerer_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'exchange_offers';
+                    readonly columns: readonly ['offered_card_item_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'card_items';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly notifications: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly is_read: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly link: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly message: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'notifications_user_id_created_at_idx_b562028f';
+                  readonly prefix: 'notifications_user_id_created_at_idx';
+                  readonly columns: readonly ['user_id', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notifications_user_id_idx_6c952402';
+                  readonly prefix: 'notifications_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notifications';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly photo_cards: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly creator_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly description: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly genre: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly image_url: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly method: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly price: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly total_quantity: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'photo_cards_creator_id_idx_c8bab67a';
+                  readonly prefix: 'photo_cards_creator_id_idx';
+                  readonly columns: readonly ['creator_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'photo_cards';
+                    readonly columns: readonly ['creator_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly point_histories: {
+              columns: {
+                readonly amount: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly balance_after: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly idempotency_key: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly reason: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['user_id', 'idempotency_key'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'point_histories_user_id_created_at_idx_b562028f';
+                  readonly prefix: 'point_histories_user_id_created_at_idx';
+                  readonly columns: readonly ['user_id', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'point_histories_user_id_idx_6c952402';
+                  readonly prefix: 'point_histories_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'point_histories';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly random_point_logs: {
+              columns: {
+                readonly draw_date: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly earned_points: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly used_count: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['user_id', 'draw_date'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'random_point_logs_user_id_idx_6c952402';
+                  readonly prefix: 'random_point_logs_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'random_point_logs';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly refresh_tokens: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly expires_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly token_hash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['token_hash'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'refresh_tokens_user_id_idx_6c952402';
+                  readonly prefix: 'refresh_tokens_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'refresh_tokens';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly sale_listings: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly exchange_description: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly exchange_genre: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly exchange_method: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly photo_card_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly price: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly remaining_quantity: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly sale_quantity: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly seller_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updated_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'sale_listings_photo_card_id_idx_92021706';
+                  readonly prefix: 'sale_listings_photo_card_id_idx';
+                  readonly columns: readonly ['photo_card_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'sale_listings_seller_id_idx_de05cd59';
+                  readonly prefix: 'sale_listings_seller_id_idx';
+                  readonly columns: readonly ['seller_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'sale_listings_status_created_at_idx_1bbe8adf';
+                  readonly prefix: 'sale_listings_status_created_at_idx';
+                  readonly columns: readonly ['status', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'sale_listings_status_price_idx_d94abea6';
+                  readonly prefix: 'sale_listings_status_price_idx';
+                  readonly columns: readonly ['status', 'price'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'sale_listings';
+                    readonly columns: readonly ['seller_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'sale_listings';
+                    readonly columns: readonly ['photo_card_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'photo_cards';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly trades: {
+              columns: {
+                readonly counterpart_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly photo_card_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly points: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly quantity: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly received_photo_card_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly seller_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'trades_counterpart_id_created_at_idx_8090177a';
+                  readonly prefix: 'trades_counterpart_id_created_at_idx';
+                  readonly columns: readonly ['counterpart_id', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'trades_counterpart_id_idx_7924248e';
+                  readonly prefix: 'trades_counterpart_id_idx';
+                  readonly columns: readonly ['counterpart_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'trades_photo_card_id_idx_92021706';
+                  readonly prefix: 'trades_photo_card_id_idx';
+                  readonly columns: readonly ['photo_card_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'trades_received_photo_card_id_idx_98089ed0';
+                  readonly prefix: 'trades_received_photo_card_id_idx';
+                  readonly columns: readonly ['received_photo_card_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'trades_seller_id_created_at_idx_c796964a';
+                  readonly prefix: 'trades_seller_id_created_at_idx';
+                  readonly columns: readonly ['seller_id', 'created_at'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'trades_seller_id_idx_de05cd59';
+                  readonly prefix: 'trades_seller_id_idx';
+                  readonly columns: readonly ['seller_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'trades';
+                    readonly columns: readonly ['seller_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'trades';
+                    readonly columns: readonly ['counterpart_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'trades';
+                    readonly columns: readonly ['photo_card_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'photo_cards';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'trades';
+                    readonly columns: readonly ['received_photo_card_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'photo_cards';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly users: {
               columns: {
                 readonly created_at: {
@@ -396,6 +1959,56 @@ type ContractBase = Omit<
               foreignKeys: readonly [];
             };
           };
+          readonly valueSet: {
+            readonly CardItemStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['HELD', 'ON_SALE', 'OFFERED'];
+            };
+            readonly ExchangeOfferStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'ACCEPTED', 'REJECTED', 'CANCELED'];
+            };
+            readonly NotificationType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'SIGNUP',
+                'OFFER_RECEIVED',
+                'OFFER_ACCEPTED',
+                'OFFER_REJECTED',
+                'PURCHASE_COMPLETED',
+                'SALE_COMPLETED',
+                'SOLD_OUT',
+                'LISTING_UPDATED',
+              ];
+            };
+            readonly PhotoCardGenre: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'LANDSCAPE',
+                'PORTRAIT',
+                'ANIMAL',
+                'PLANT',
+                'OBJECT',
+                'ETC',
+              ];
+            };
+            readonly PhotoCardMethod: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PHOTO', 'CRAFT', 'AI', 'ETC'];
+            };
+            readonly PointHistoryReason: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['SIGNUP', 'PURCHASE', 'SALE', 'RANDOM'];
+            };
+            readonly SaleListingStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['ON_SALE', 'SOLD_OUT', 'CANCELED'];
+            };
+            readonly TradeType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PURCHASE', 'EXCHANGE'];
+            };
+          };
         };
       };
     };
@@ -406,12 +2019,844 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly card_items: { readonly namespace: 'public' & NamespaceId; readonly model: 'CardItem' };
+    readonly creation_logs: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CreationLog';
+    };
+    readonly exchange_offers: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ExchangeOffer';
+    };
+    readonly notifications: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Notification';
+    };
+    readonly photo_cards: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PhotoCard';
+    };
+    readonly point_histories: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PointHistory';
+    };
+    readonly random_point_logs: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'RandomPointLog';
+    };
+    readonly refresh_tokens: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'RefreshToken';
+    };
+    readonly sale_listings: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SaleListing';
+    };
+    readonly trades: { readonly namespace: 'public' & NamespaceId; readonly model: 'Trade' };
     readonly users: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly CardItem: {
+            readonly fields: {
+              readonly acquiredAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly listingId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly offerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly ownerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly photoCardId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly listing: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SaleListing';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['listingId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly offer: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExchangeOffer';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['offerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly offeredInOffers: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExchangeOffer';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['offeredCardItemId'];
+                };
+              };
+              readonly owner: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['ownerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly photoCard: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PhotoCard';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['photoCardId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'card_items';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly acquiredAt: { readonly column: 'acquired_at' };
+                readonly id: { readonly column: 'id' };
+                readonly listingId: { readonly column: 'listing_id' };
+                readonly offerId: { readonly column: 'offer_id' };
+                readonly ownerId: { readonly column: 'owner_id' };
+                readonly photoCardId: { readonly column: 'photo_card_id' };
+                readonly status: { readonly column: 'status' };
+              };
+            };
+          };
+          readonly CreationLog: {
+            readonly fields: {
+              readonly createdCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly yearMonth: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'creation_logs';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdCount: { readonly column: 'created_count' };
+                readonly id: { readonly column: 'id' };
+                readonly userId: { readonly column: 'user_id' };
+                readonly yearMonth: { readonly column: 'year_month' };
+              };
+            };
+          };
+          readonly ExchangeOffer: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly listingId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly offeredCardItemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly offererId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly linkedCardItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CardItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['offerId'];
+                };
+              };
+              readonly listing: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SaleListing';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['listingId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly offeredCardItem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CardItem';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['offeredCardItemId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly offerer: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['offererId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'exchange_offers';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly listingId: { readonly column: 'listing_id' };
+                readonly offeredCardItemId: { readonly column: 'offered_card_item_id' };
+                readonly offererId: { readonly column: 'offerer_id' };
+                readonly status: { readonly column: 'status' };
+              };
+            };
+          };
+          readonly Notification: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isRead: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly link: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly message: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'notifications';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly id: { readonly column: 'id' };
+                readonly isRead: { readonly column: 'is_read' };
+                readonly link: { readonly column: 'link' };
+                readonly message: { readonly column: 'message' };
+                readonly type: { readonly column: 'type' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
+          readonly PhotoCard: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly creatorId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly genre: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly imageUrl: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly method: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly price: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly totalQuantity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly cardItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CardItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['photoCardId'];
+                };
+              };
+              readonly creator: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['creatorId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly receivedInTrades: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Trade';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['receivedPhotoCardId'];
+                };
+              };
+              readonly saleListings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SaleListing';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['photoCardId'];
+                };
+              };
+              readonly tradedInTrades: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Trade';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['photoCardId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'photo_cards';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly creatorId: { readonly column: 'creator_id' };
+                readonly description: { readonly column: 'description' };
+                readonly genre: { readonly column: 'genre' };
+                readonly id: { readonly column: 'id' };
+                readonly imageUrl: { readonly column: 'image_url' };
+                readonly method: { readonly column: 'method' };
+                readonly name: { readonly column: 'name' };
+                readonly price: { readonly column: 'price' };
+                readonly totalQuantity: { readonly column: 'total_quantity' };
+              };
+            };
+          };
+          readonly PointHistory: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly balanceAfter: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly idempotencyKey: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly reason: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'point_histories';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly amount: { readonly column: 'amount' };
+                readonly balanceAfter: { readonly column: 'balance_after' };
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly id: { readonly column: 'id' };
+                readonly idempotencyKey: { readonly column: 'idempotency_key' };
+                readonly reason: { readonly column: 'reason' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
+          readonly RandomPointLog: {
+            readonly fields: {
+              readonly drawDate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly earnedPoints: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly usedCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'random_point_logs';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly drawDate: { readonly column: 'draw_date' };
+                readonly earnedPoints: { readonly column: 'earned_points' };
+                readonly id: { readonly column: 'id' };
+                readonly usedCount: { readonly column: 'used_count' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
+          readonly RefreshToken: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly expiresAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly tokenHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'refresh_tokens';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly expiresAt: { readonly column: 'expires_at' };
+                readonly id: { readonly column: 'id' };
+                readonly tokenHash: { readonly column: 'token_hash' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
+          readonly SaleListing: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly exchangeDescription: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly exchangeGenre: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly exchangeMethod: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly photoCardId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly price: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly remainingQuantity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly saleQuantity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sellerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly cardItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CardItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['listingId'];
+                };
+              };
+              readonly exchangeOffers: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExchangeOffer';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['listingId'];
+                };
+              };
+              readonly photoCard: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PhotoCard';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['photoCardId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly seller: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['sellerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'sale_listings';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly exchangeDescription: { readonly column: 'exchange_description' };
+                readonly exchangeGenre: { readonly column: 'exchange_genre' };
+                readonly exchangeMethod: { readonly column: 'exchange_method' };
+                readonly id: { readonly column: 'id' };
+                readonly photoCardId: { readonly column: 'photo_card_id' };
+                readonly price: { readonly column: 'price' };
+                readonly remainingQuantity: { readonly column: 'remaining_quantity' };
+                readonly saleQuantity: { readonly column: 'sale_quantity' };
+                readonly sellerId: { readonly column: 'seller_id' };
+                readonly status: { readonly column: 'status' };
+                readonly updatedAt: { readonly column: 'updated_at' };
+              };
+            };
+          };
+          readonly Trade: {
+            readonly fields: {
+              readonly counterpartId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly photoCardId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly points: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly quantity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly receivedPhotoCardId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sellerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly counterpart: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['counterpartId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly photoCard: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PhotoCard';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['photoCardId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly receivedPhotoCard: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PhotoCard';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['receivedPhotoCardId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly seller: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['sellerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'trades';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly counterpartId: { readonly column: 'counterpart_id' };
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly id: { readonly column: 'id' };
+                readonly photoCardId: { readonly column: 'photo_card_id' };
+                readonly points: { readonly column: 'points' };
+                readonly quantity: { readonly column: 'quantity' };
+                readonly receivedPhotoCardId: { readonly column: 'received_photo_card_id' };
+                readonly sellerId: { readonly column: 'seller_id' };
+                readonly type: { readonly column: 'type' };
+              };
+            };
+          };
           readonly User: {
             readonly fields: {
               readonly createdAt: {
@@ -453,7 +2898,129 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly counterpartTrades: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Trade';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['counterpartId'];
+                };
+              };
+              readonly createdPhotoCards: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PhotoCard';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['creatorId'];
+                };
+              };
+              readonly creationLogs: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CreationLog';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly exchangeOffers: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExchangeOffer';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['offererId'];
+                };
+              };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly ownedCardItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CardItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['ownerId'];
+                };
+              };
+              readonly pointHistories: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PointHistory';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly randomPointLogs: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'RandomPointLog';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly refreshTokens: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'RefreshToken';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly saleListings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SaleListing';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sellerId'];
+                };
+              };
+              readonly sellerTrades: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Trade';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sellerId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'users';
               readonly namespaceId: 'public';
@@ -469,6 +3036,134 @@ type ContractBase = Omit<
               };
             };
           };
+        };
+        readonly enum: {
+          readonly CardItemStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'HELD'; readonly value: 'HELD' },
+              { readonly name: 'ON_SALE'; readonly value: 'ON_SALE' },
+              { readonly name: 'OFFERED'; readonly value: 'OFFERED' },
+            ];
+          };
+          readonly ExchangeOfferStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'ACCEPTED'; readonly value: 'ACCEPTED' },
+              { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+              { readonly name: 'CANCELED'; readonly value: 'CANCELED' },
+            ];
+          };
+          readonly NotificationType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+              { readonly name: 'OFFER_RECEIVED'; readonly value: 'OFFER_RECEIVED' },
+              { readonly name: 'OFFER_ACCEPTED'; readonly value: 'OFFER_ACCEPTED' },
+              { readonly name: 'OFFER_REJECTED'; readonly value: 'OFFER_REJECTED' },
+              { readonly name: 'PURCHASE_COMPLETED'; readonly value: 'PURCHASE_COMPLETED' },
+              { readonly name: 'SALE_COMPLETED'; readonly value: 'SALE_COMPLETED' },
+              { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+              { readonly name: 'LISTING_UPDATED'; readonly value: 'LISTING_UPDATED' },
+            ];
+          };
+          readonly PhotoCardGenre: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'LANDSCAPE'; readonly value: 'LANDSCAPE' },
+              { readonly name: 'PORTRAIT'; readonly value: 'PORTRAIT' },
+              { readonly name: 'ANIMAL'; readonly value: 'ANIMAL' },
+              { readonly name: 'PLANT'; readonly value: 'PLANT' },
+              { readonly name: 'OBJECT'; readonly value: 'OBJECT' },
+              { readonly name: 'ETC'; readonly value: 'ETC' },
+            ];
+          };
+          readonly PhotoCardMethod: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PHOTO'; readonly value: 'PHOTO' },
+              { readonly name: 'CRAFT'; readonly value: 'CRAFT' },
+              { readonly name: 'AI'; readonly value: 'AI' },
+              { readonly name: 'ETC'; readonly value: 'ETC' },
+            ];
+          };
+          readonly PointHistoryReason: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+              { readonly name: 'PURCHASE'; readonly value: 'PURCHASE' },
+              { readonly name: 'SALE'; readonly value: 'SALE' },
+              { readonly name: 'RANDOM'; readonly value: 'RANDOM' },
+            ];
+          };
+          readonly SaleListingStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'ON_SALE'; readonly value: 'ON_SALE' },
+              { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+              { readonly name: 'CANCELED'; readonly value: 'CANCELED' },
+            ];
+          };
+          readonly TradeType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PURCHASE'; readonly value: 'PURCHASE' },
+              { readonly name: 'EXCHANGE'; readonly value: 'EXCHANGE' },
+            ];
+          };
+        };
+        readonly enumMemberTypes?: {
+          readonly CardItemStatus: readonly [
+            { readonly name: 'HELD'; readonly value: 'HELD' },
+            { readonly name: 'ON_SALE'; readonly value: 'ON_SALE' },
+            { readonly name: 'OFFERED'; readonly value: 'OFFERED' },
+          ];
+          readonly ExchangeOfferStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'ACCEPTED'; readonly value: 'ACCEPTED' },
+            { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+            { readonly name: 'CANCELED'; readonly value: 'CANCELED' },
+          ];
+          readonly NotificationType: readonly [
+            { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+            { readonly name: 'OFFER_RECEIVED'; readonly value: 'OFFER_RECEIVED' },
+            { readonly name: 'OFFER_ACCEPTED'; readonly value: 'OFFER_ACCEPTED' },
+            { readonly name: 'OFFER_REJECTED'; readonly value: 'OFFER_REJECTED' },
+            { readonly name: 'PURCHASE_COMPLETED'; readonly value: 'PURCHASE_COMPLETED' },
+            { readonly name: 'SALE_COMPLETED'; readonly value: 'SALE_COMPLETED' },
+            { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+            { readonly name: 'LISTING_UPDATED'; readonly value: 'LISTING_UPDATED' },
+          ];
+          readonly PhotoCardGenre: readonly [
+            { readonly name: 'LANDSCAPE'; readonly value: 'LANDSCAPE' },
+            { readonly name: 'PORTRAIT'; readonly value: 'PORTRAIT' },
+            { readonly name: 'ANIMAL'; readonly value: 'ANIMAL' },
+            { readonly name: 'PLANT'; readonly value: 'PLANT' },
+            { readonly name: 'OBJECT'; readonly value: 'OBJECT' },
+            { readonly name: 'ETC'; readonly value: 'ETC' },
+          ];
+          readonly PhotoCardMethod: readonly [
+            { readonly name: 'PHOTO'; readonly value: 'PHOTO' },
+            { readonly name: 'CRAFT'; readonly value: 'CRAFT' },
+            { readonly name: 'AI'; readonly value: 'AI' },
+            { readonly name: 'ETC'; readonly value: 'ETC' },
+          ];
+          readonly PointHistoryReason: readonly [
+            { readonly name: 'SIGNUP'; readonly value: 'SIGNUP' },
+            { readonly name: 'PURCHASE'; readonly value: 'PURCHASE' },
+            { readonly name: 'SALE'; readonly value: 'SALE' },
+            { readonly name: 'RANDOM'; readonly value: 'RANDOM' },
+          ];
+          readonly SaleListingStatus: readonly [
+            { readonly name: 'ON_SALE'; readonly value: 'ON_SALE' },
+            { readonly name: 'SOLD_OUT'; readonly value: 'SOLD_OUT' },
+            { readonly name: 'CANCELED'; readonly value: 'CANCELED' },
+          ];
+          readonly TradeType: readonly [
+            { readonly name: 'PURCHASE'; readonly value: 'PURCHASE' },
+            { readonly name: 'EXCHANGE'; readonly value: 'EXCHANGE' },
+          ];
         };
       };
     };

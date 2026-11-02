@@ -18,8 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'41aa984e5f165b05d5903dde2d2ddf8724395c7f5ccda76b1957c54b05bdddfe'>;
-export type ExecutionHash = ExecutionHashBase<string>;
+  StorageHashBase<'ea945ccf501edb7cc087c6f86feeefee931c0b56940ffb7161a469c4dfb76fe4'>;
+export type ExecutionHash =
+  ExecutionHashBase<'9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -1677,7 +1678,6 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
               };
@@ -3196,6 +3196,22 @@ type ContractBase = Omit<
     };
   };
   readonly extensions: {};
+  readonly execution: {
+    readonly executionHash: ExecutionHash;
+    readonly mutations: {
+      readonly defaults: readonly [
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'sale_listings';
+            readonly field: 'updated_at';
+            readonly namespace: 'public';
+          };
+        },
+      ];
+    };
+  };
   readonly meta: {};
 
   readonly profileHash: ProfileHash;

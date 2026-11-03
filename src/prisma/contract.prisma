@@ -133,7 +133,7 @@ model SaleListing {
   exchangeDescription String             @map("exchange_description")
   status              SaleListingStatus
   createdAt           TimestamptzString  @default(now()) @map("created_at")
-  updatedAt           TimestamptzString  @default(now()) @map("updated_at")
+  updatedAt           temporal.updatedAtString() @map("updated_at")
 
   cardItems CardItem[]
   exchangeOffers ExchangeOffer[]
@@ -143,6 +143,8 @@ model SaleListing {
 
   @@check(expression: sql`"price" BETWEEN 1 AND 1000`, name: "sale_listings_price_range")
   @@check(expression: sql`"remaining_quantity" >= 0`, name: "sale_listings_remaining_nonnegative")
+  @@check(expression: sql`"sale_quantity" > 0 AND "remaining_quantity" <= "sale_quantity"`, name: "sale_listings_quantity_bounds")
+
   @@index([status, createdAt])
   @@index([status, price])
   @@index([sellerId])
@@ -201,6 +203,11 @@ model Trade {
   points              Int
   createdAt           TimestamptzString @default(now()) @map("created_at")
 
+  @@check(
+  expression: sql`"quantity" > 0 AND "points" >= 0`,
+  name: "trades_quantity_points_valid"
+  )
+
   seller User @relation(
     "TradeSeller",
     fields: [sellerId],
@@ -250,6 +257,11 @@ model PointHistory {
 
   user User @relation(fields: [userId], references: [id])
 
+  @@check(
+  expression: sql`"balance_after" >= 0`,
+  name: "point_histories_balance_after_nonnegative"
+  )
+
   @@index([userId, createdAt])
   @@unique([userId, idempotencyKey])
   @@map("point_histories")
@@ -273,8 +285,8 @@ model Notification {
   userId    Int               @map("user_id")
   type      NotificationType
   message   String
-  link      String
-  isRead    Boolean           @map("is_read")
+  link      String?
+  isRead    Boolean           @default(false) @map("is_read")
   createdAt TimestamptzString @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id])

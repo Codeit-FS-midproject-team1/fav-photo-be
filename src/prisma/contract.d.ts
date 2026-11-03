@@ -18,8 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'41aa984e5f165b05d5903dde2d2ddf8724395c7f5ccda76b1957c54b05bdddfe'>;
-export type ExecutionHash = ExecutionHashBase<string>;
+  StorageHashBase<'8a2ab38a637166638063042d33f132e6ee9f780d2aae7aabc2d264ec84f4b44b'>;
+export type ExecutionHash =
+  ExecutionHashBase<'9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -261,7 +262,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isRead: CodecTypes['pg/bool@1']['output'];
-      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'] | null;
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly type:
         | 'SIGNUP'
@@ -376,7 +377,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isRead: CodecTypes['pg/bool@1']['input'];
-      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'] | null;
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly type:
         | 'SIGNUP'
@@ -491,7 +492,7 @@ export type StorageColumnTypes = {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly is_read: CodecTypes['pg/bool@1']['output'];
-      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly link: CodecTypes['pg/text@1']['output'] | null;
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly type:
         | 'SIGNUP'
@@ -606,7 +607,7 @@ export type StorageColumnInputTypes = {
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly is_read: CodecTypes['pg/bool@1']['input'];
-      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly link: CodecTypes['pg/text@1']['input'] | null;
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly type:
         | 'SIGNUP'
@@ -734,7 +735,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     isRead: CodecTypes['pg/bool@1']['output'];
-    link: CodecTypes['pg/text@1']['output'];
+    link: CodecTypes['pg/text@1']['output'] | null;
     message: CodecTypes['pg/text@1']['output'];
     type:
       | 'SIGNUP'
@@ -1243,12 +1244,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/bool';
                   readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
                   readonly many: false;
                 };
                 readonly link: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly message: {
@@ -1677,7 +1682,6 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
               };
@@ -2318,7 +2322,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
               readonly link: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly message: {
@@ -3196,6 +3200,22 @@ type ContractBase = Omit<
     };
   };
   readonly extensions: {};
+  readonly execution: {
+    readonly executionHash: ExecutionHash;
+    readonly mutations: {
+      readonly defaults: readonly [
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'sale_listings';
+            readonly field: 'updated_at';
+            readonly namespace: 'public';
+          };
+        },
+      ];
+    };
+  };
   readonly meta: {};
 
   readonly profileHash: ProfileHash;

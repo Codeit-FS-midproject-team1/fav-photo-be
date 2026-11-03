@@ -641,7 +641,7 @@
                 }
               },
               "link": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -2295,12 +2295,16 @@
                 "is_read": {
                   "codecId": "pg/bool@1",
                   "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
                   "nullable": false
                 },
                 "link": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "message": {
                   "codecId": "pg/text@1",
@@ -2501,6 +2505,11 @@
             },
             "point_histories": {
               "checks": [
+                {
+                  "expression": "\"balance_after\" >= 0",
+                  "name": "point_histories_balance_after_nonnegative_6fffd8c7",
+                  "prefix": "point_histories_balance_after_nonnegative"
+                },
                 {
                   "expression": "\"reason\" IN ('SIGNUP', 'PURCHASE', 'SALE', 'RANDOM')",
                   "name": "point_histories_reason_check_dbb7e44f",
@@ -2794,6 +2803,11 @@
                   "prefix": "sale_listings_price_range"
                 },
                 {
+                  "expression": "\"sale_quantity\" > 0 AND \"remaining_quantity\" <= \"sale_quantity\"",
+                  "name": "sale_listings_quantity_bounds_279e31ff",
+                  "prefix": "sale_listings_quantity_bounds"
+                },
+                {
                   "expression": "\"remaining_quantity\" >= 0",
                   "name": "sale_listings_remaining_nonnegative_1012e92c",
                   "prefix": "sale_listings_remaining_nonnegative"
@@ -2889,10 +2903,6 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nullable": false
                 }
               },
@@ -2981,6 +2991,11 @@
             },
             "trades": {
               "checks": [
+                {
+                  "expression": "\"quantity\" > 0 AND \"points\" >= 0",
+                  "name": "trades_quantity_points_valid_3837e16a",
+                  "prefix": "trades_quantity_points_valid"
+                },
                 {
                   "expression": "\"type\" IN ('PURCHASE', 'EXCHANGE')",
                   "name": "trades_type_check_e811fb8e",
@@ -3354,7 +3369,29 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "41aa984e5f165b05d5903dde2d2ddf8724395c7f5ccda76b1957c54b05bdddfe"
+    "storageHash": "8a2ab38a637166638063042d33f132e6ee9f780d2aae7aabc2d264ec84f4b44b"
+  },
+  "execution": {
+    "executionHash": "9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5",
+    "mutations": {
+      "defaults": [
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "sale_listings",
+            "field": "updated_at",
+            "namespace": "public"
+          }
+        }
+      ]
+    }
   },
   "capabilities": {
     "postgres": {

@@ -641,7 +641,7 @@
                 }
               },
               "link": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -2295,12 +2295,16 @@
                 "is_read": {
                   "codecId": "pg/bool@1",
                   "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
                   "nullable": false
                 },
                 "link": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "message": {
                   "codecId": "pg/text@1",
@@ -3365,7 +3369,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ea945ccf501edb7cc087c6f86feeefee931c0b56940ffb7161a469c4dfb76fe4"
+    "storageHash": "8a2ab38a637166638063042d33f132e6ee9f780d2aae7aabc2d264ec84f4b44b"
   },
   "execution": {
     "executionHash": "9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5",

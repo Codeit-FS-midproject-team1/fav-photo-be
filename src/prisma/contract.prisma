@@ -285,8 +285,8 @@ model Notification {
   userId    Int               @map("user_id")
   type      NotificationType
   message   String
-  link      String
-  isRead    Boolean           @map("is_read")
+  link      String?
+  isRead    Boolean           @default(false) @map("is_read")
   createdAt TimestamptzString @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id])

@@ -8,8 +8,8 @@ export class AuthRepository {
   }
 
   #refreshTokenModel(tx) {
-  return (tx ?? this.db).orm.public.RefreshToken;
-}
+    return (tx ?? this.db).orm.public.RefreshToken;
+  }
 
   findByEmail(email) {
     return this.#model().where({ email }).first();
@@ -24,10 +24,18 @@ export class AuthRepository {
   }
 
   createRefreshToken({ userId, tokenHash, expiresAt }, tx) {
-  return this.#refreshTokenModel(tx).create({
-    userId,
-    tokenHash,
-    expiresAt,
-  });
-}
+    return this.#refreshTokenModel(tx).create({
+      userId,
+      tokenHash,
+      expiresAt,
+    });
+  }
+
+  findRefreshTokenByHash(tokenHash) {
+    return this.#refreshTokenModel().where({ tokenHash }).first();
+  }
+
+  deleteRefreshTokenByHash(tokenHash) {
+    return this.#refreshTokenModel().where({ tokenHash }).delete();
+  }
 }

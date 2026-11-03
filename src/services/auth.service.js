@@ -58,4 +58,46 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+
+  async refresh(refreshToken) {
+    if (!refreshToken) throw unauthorized();
+
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
+    const storedToken =
+      await this.authRepository.findRefreshTokenByHash(tokenHash);
+
+    if (!storedToken || new Date(storedToken.expiresAt) <= new Date()) {
+      throw unauthorized();
+    }
+
+    const nextRefreshToken = randomBytes(64).toString("hex");
+    const nextTokenHash = createHash("sha256")
+      .update(nextRefreshToken)
+      .digest("hex");
+    const expiresAt = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
+
+    await this.authRepository.deleteRefreshTokenByHash(tokenHash);
+    await this.authRepository.createRefreshToken({
+      userId: storedToken.userId,
+      tokenHash: nextTokenHash,
+      expiresAt,
+    });
+
+    const accessToken = jwt.sign(
+      { userId: storedToken.userId },
+      process.env.JWT_ACCESS_SECRET,
+      { expiresIn: "15m" },
+    );
+
+    return { accessToken, refreshToken: nextRefreshToken };
+  }
+
+  async logout(refreshToken) {
+    if (!refreshToken) return;
+
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
+    await this.authRepository.deleteRefreshTokenByHash(tokenHash);
+  }
 }

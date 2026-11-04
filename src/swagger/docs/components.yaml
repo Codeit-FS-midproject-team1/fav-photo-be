@@ -1,0 +1,19 @@
+components:
+  schemas:
+    PhotoCard:
+      type: object
+      properties:
+        id: { type: integer, example: 100 }
+        name: { type: string, example: 우리집 앞마당 }
+        description: { type: string, nullable: true, example: 봄에 찍은 앞마당 사진입니다. }
+        method: { type: string, enum: [PHOTO, CRAFT, AI, ETC] }
+        genre: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+        price: { type: integer, description: 원본 포토카드 기본 가격, example: 40 }
+        totalQuantity: { type: integer, description: 원본 포토카드의 총 발행량, example: 5 }
+        imageUrl: { type: string, example: 'https://example.com/garden.webp' }
+        creator:
+          type: object
+          properties:
+            id: { type: integer, example: 3 }
+            nickname: { type: string, example: 포토러버 }
+        createdAt: { type: string, format: date-time, example: '2026-10-20T03:00:00.000Z' }

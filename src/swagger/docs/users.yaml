@@ -1,0 +1,458 @@
+/users/me:
+  get:
+    tags: [Users]
+    summary: 내 정보 조회
+    description: 로그인한 유저의 정보를 조회합니다.
+    security:
+      - bearerAuth: []
+    responses:
+      200:
+        description: 조회 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: integer, example: 1 }
+                email: { type: string, example: photo@example.com }
+                nickname: { type: string, example: 포토러버 }
+                points: { type: integer, example: 120 }
+                hasPassword:
+                  {
+                    type: boolean,
+                    description: 비밀번호가 존재하는지 여부,
+                    example: true,
+                  }
+                randomPoint:
+                  type: object
+                  description: 랜덤 포인트 정보
+                  properties:
+                    used: { type: integer, example: 1 }
+                    limit: { type: integer, example: 3 }
+                    nextResetAt:
+                      {
+                        type: string,
+                        format: date-time,
+                        example: "2026-10-23T15:00:00.000Z",
+                      }
+                creation:
+                  type: object
+                  description: 월별 생성 기록 정보
+                  properties:
+                    used: { type: integer, example: 2 }
+                    limit: { type: integer, example: 3 }
+                    nextResetAt:
+                      {
+                        type: string,
+                        format: date-time,
+                        example: "2026-10-31T15:00:00.000Z",
+                      }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+
+  delete:
+    tags: [Users]
+    summary: 회원 탈퇴
+    description: 로그인한 유저의 정보를 삭제합니다.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [password]
+            properties:
+              password:
+                type: string
+                description: 확인 비밀번호
+                example: abcd1234!
+    responses:
+      204:
+        description: 탈퇴 성공
+        headers:
+          Set-Cookie:
+            description: refreshToken 쿠키 삭제 (Max-Age=0)
+            schema: { type: string }
+      400:
+        description: 비밀번호 미입력 또는 불일치
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 비밀번호를 입력해 주세요. }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+
+/users/me/nickname:
+  patch:
+    tags: [Users]
+    summary: 닉네임 변경
+    description: 로그인한 유저의 닉네임을 변경합니다.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [newNickname]
+            properties:
+              newNickname:
+                type: string
+                maxLength: 10
+                example: 새닉네임
+    responses:
+      200:
+        description: 변경 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 닉네임이 변경되었습니다. }
+                nickname: { type: string, example: 새닉네임 }
+      400:
+        description: 잘못된 요청값
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 잘못된 요청값입니다. }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+      409:
+        description: 닉네임 중복
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 이미 사용 중인 닉네임입니다. }
+
+/users/me/password:
+  patch:
+    tags: [Users]
+    summary: 비밀번호 변경
+    description: 로그인한 유저의 비밀번호를 변경합니다.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [prevPassword, newPassword]
+            properties:
+              prevPassword:
+                type: string
+                minLength: 8
+                maxLength: 16
+                description: 현재 비밀번호
+                example: abcd1234!
+              newPassword:
+                type: string
+                minLength: 8
+                maxLength: 16
+                description: 변경하려는 새 비밀번호 (숫자, 영문, 특수문자 포함, 현재 비밀번호와 달라야 함)
+                example: efgh5678!
+    responses:
+      200:
+        description: 변경 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  {
+                    type: string,
+                    example: 비밀번호가 성공적으로 변경되었습니다.,
+                  }
+      400:
+        description: 잘못된 요청값 (형식 오류, 현재 비밀번호와 동일)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  {
+                    type: string,
+                    example: 새 비밀번호는 8~16자의 영문자와 숫자를 포함해야 합니다.,
+                  }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+      403:
+        description: 현재 비밀번호 불일치
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  { type: string, example: 현재 비밀번호가 올바르지 않습니다. }
+
+/users/me/cards:
+  get:
+    tags: [Users]
+    summary: 마이갤러리
+    description: 보유(HELD) 상태인 카드만 원본 카드별로 묶어서 보여 줍니다. (판매 중, 교환 제시 중 제외)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: keyword
+        description: 포토카드 이름 검색어
+        schema: { type: string }
+        example: 앞마당
+      - in: query
+        name: method
+        description: 제작 방식 필터
+        schema: { type: string, enum: [PHOTO, CRAFT, AI, ETC] }
+      - in: query
+        name: genre
+        description: 장르 필터
+        schema: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+      - in: query
+        name: sort
+        description: 정렬 기준 (동일 값은 photo_cards.id 오름차순)
+        schema: { type: string, enum: [LATEST, OLDEST, PRICE_ASC, PRICE_DESC], default: LATEST }
+      - in: query
+        name: page
+        schema: { type: integer, minimum: 1, default: 1 }
+      - in: query
+        name: pageSize
+        schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+    responses:
+      200:
+        description: 조회 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, summary, pagination]
+              properties:
+                items:
+                  type: array
+                  description: 원본 포토카드별 그룹화 목록
+                  items:
+                    type: object
+                    properties:
+                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
+                      quantity:
+                        type: integer
+                        description: 현재 보유(HELD) 중인 해당 원본 카드의 실제 장수
+                        example: 3
+                      latestAcquiredAt:
+                        type: string
+                        format: date-time
+                        description: 현재 보유 중인 동일 원본 카드들의 가장 최근 획득 일시
+                        example: '2026-10-28T08:00:00.000Z'
+                summary:
+                  type: object
+                  properties:
+                    methodCounts:
+                      type: object
+                      description: 제작 방식별 보유 포토카드 종류 수 (method 필터 제외, keyword/genre 반영)
+                      properties:
+                        PHOTO: { type: integer, example: 2 }
+                        CRAFT: { type: integer, example: 1 }
+                        AI: { type: integer, example: 1 }
+                        ETC: { type: integer, example: 1 }
+                pagination:
+                  type: object
+                  properties:
+                    page: { type: integer, example: 1 }
+                    pageSize: { type: integer, example: 4 }
+                    totalItems: { type: integer, description: 필터 적용 후 전체 카드 종류 수, example: 5 }
+                    totalPages: { type: integer, example: 2 }
+                    hasNext: { type: boolean, example: true }
+      400:
+        description: 잘못된 요청값
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string }
+            examples:
+              method:
+                summary: 제작 방식 오류
+                value: { message: 올바른 제작 방식을 선택해주세요. }
+              genre:
+                summary: 장르 오류
+                value: { message: 올바른 장르를 선택해주세요. }
+              sort:
+                summary: 정렬 기준 오류
+                value: { message: 올바른 정렬 기준을 선택해주세요. }
+              page:
+                summary: 페이지 번호 오류
+                value: { message: 페이지 번호는 1 이상의 정수여야 합니다. }
+              pageSize:
+                summary: 페이지 크기 오류
+                value: { message: 페이지당 항목 수는 1 이상의 정수여야 합니다. }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+
+/users/me/sales:
+  get:
+    tags: [Users]
+    summary: 나의 거래 포토카드
+    description: 내가 등록한 판매글(SALE)과 다른 판매글에 보낸 교환 제안(OFFER)을 함께 조회합니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: keyword
+        description: 포토카드 이름 검색어
+        schema: { type: string }
+      - in: query
+        name: sort
+        description: 거래 생성 시각 기준 정렬 (동일 시각은 type → id 순)
+        schema: { type: string, enum: [LATEST, OLDEST], default: LATEST }
+      - in: query
+        name: method
+        schema: { type: string, enum: [PHOTO, CRAFT, AI, ETC] }
+      - in: query
+        name: genre
+        schema: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+      - in: query
+        name: status
+        description: 거래 상태 필터 (미전달 시 전체)
+        schema: { type: string, enum: [ON_SALE, SOLD_OUT, OFFER_PENDING, EXCHANGED] }
+      - in: query
+        name: page
+        schema: { type: integer, minimum: 1, default: 1 }
+      - in: query
+        name: pageSize
+        schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+    responses:
+      200:
+        description: 조회 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, summary, pagination]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type: { type: string, enum: [SALE, OFFER], example: SALE }
+                      id:
+                        type: integer
+                        description: SALE은 판매글 ID, OFFER는 교환 제안 ID
+                        example: 301
+                      saleListingId:
+                        type: integer
+                        description: 판매글 ID (OFFER는 교환을 제안한 상대 판매글 ID)
+                        example: 301
+                      status:
+                        type: string
+                        enum: [ON_SALE, SOLD_OUT, OFFER_PENDING, EXCHANGED]
+                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
+                      quantity:
+                        type: integer
+                        description: 판매 잔여 수량 (OFFER는 항상 1)
+                        example: 3
+                      price:
+                        type: integer
+                        nullable: true
+                        description: 판매글의 장당 가격
+                        example: 100
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: 판매글 등록 또는 교환 제안 생성 일시
+                        example: '2026-10-28T09:00:00.000Z'
+                summary:
+                  type: object
+                  properties:
+                    methodCounts:
+                      type: object
+                      properties:
+                        PHOTO: { type: integer, example: 2 }
+                        CRAFT: { type: integer, example: 1 }
+                        AI: { type: integer, example: 1 }
+                        ETC: { type: integer, example: 1 }
+                pagination:
+                  type: object
+                  properties:
+                    page: { type: integer, example: 1 }
+                    pageSize: { type: integer, example: 4 }
+                    totalItems: { type: integer, description: 필터 적용 후 전체 항목 수, example: 5 }
+                    totalPages: { type: integer, example: 2 }
+                    hasNext: { type: boolean, example: true }
+      400:
+        description: 잘못된 요청값
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string }
+            examples:
+              method:
+                summary: 제작 방식 오류
+                value: { message: 올바른 제작 방식을 선택해주세요. }
+              genre:
+                summary: 장르 오류
+                value: { message: 올바른 장르를 선택해주세요. }
+              status:
+                summary: 거래 상태 오류
+                value: { message: 올바른 거래 상태를 선택해주세요. }
+              sort:
+                summary: 정렬 기준 오류
+                value: { message: 올바른 정렬 기준을 선택해주세요. }
+              page:
+                summary: 페이지 번호 오류
+                value: { message: 페이지 번호는 1 이상의 정수여야 합니다. }
+              pageSize:
+                summary: 페이지 크기 오류
+                value: { message: 페이지당 항목 수는 1 이상의 정수여야 합니다. }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }                

@@ -1,0 +1,230 @@
+/auth/signup:
+  post:
+    tags: [Auth]
+    summary: 회원가입
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, nickname, password]
+            properties:
+              email:
+                type: string
+                format: email
+                description: 이메일 문자열
+                example: photo@example.com
+              nickname:
+                type: string
+                maxLength: 10
+                description: 닉네임 문자열
+                example: 포토러버
+              password:
+                type: string
+                minLength: 8
+                maxLength: 16
+                description: 비밀번호 문자열 (숫자, 영문, 특수기호 포함)
+                example: abcd1234!
+    responses:
+      201:
+        description: 회원가입 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: integer, description: 생성된 유저의 id 값, example: 1 }
+                email: { type: string, description: 생성된 유저의 email 문자열, example: photo@example.com }
+                nickname: { type: string, description: 생성된 유저의 nickname 문자열, example: 포토러버 }
+                points: { type: integer, description: 생성된 유저의 points 값, example: 10 }
+      400:
+        description: 잘못된 요청값
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 잘못된 요청값입니다. }
+      409:
+        description: 이메일/닉네임 중복
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 이미 사용 중인 정보가 있습니다. }
+                fields:
+                  type: object
+                  properties:
+                    email: { type: string, example: 이미 사용 중인 이메일입니다. }
+                    nickname: { type: string, example: 이미 사용 중인 닉네임입니다. }
+
+/auth/login:
+  post:
+    tags: [Auth]
+    summary: 로그인
+    description: 로그인합니다.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, password]
+            properties:
+              email:
+                type: string
+                format: email
+                description: 로그인하려는 유저의 email 문자열
+                example: photo@example.com
+              password:
+                type: string
+                minLength: 8
+                maxLength: 16
+                description: 로그인하려는 유저의 password 문자열 (숫자, 영문, 특수문자)
+                example: abcd1234!
+    responses:
+      200:
+        description: 로그인 성공
+        headers:
+          Set-Cookie:
+            description: refreshToken=<token>; HttpOnly; Secure; SameSite=<정책>; Path=/auth; Max-Age=<초>
+            schema:
+              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accessToken, tokenType, expiresIn, user]
+              properties:
+                accessToken:
+                  type: string
+                  description: 인증 API 요청에 사용하는 액세스 토큰 문자열
+                  example: <token>
+                tokenType:
+                  type: string
+                  example: Bearer
+                expiresIn:
+                  type: integer
+                  description: 액세스 토큰 만료 시간(초)
+                  example: 3600
+                user:
+                  type: object
+                  properties:
+                    id: { type: integer, example: 1 }
+                    email: { type: string, example: photo@example.com }
+                    nickname: { type: string, example: 포토러버 }
+                    points: { type: integer, example: 10 }
+      400:
+        description: 잘못된 요청값
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 잘못된 요청값입니다. }
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 이메일 또는 비밀번호가 올바르지 않습니다. }
+
+/auth/logout:
+  post:
+    tags: [Auth]
+    summary: 로그아웃
+    description: 로그아웃합니다. refreshToken은 쿠키로 전달됩니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: cookie
+        name: refreshToken
+        required: true
+        schema: { type: string }
+    responses:
+      200:
+        description: 로그아웃 성공
+        headers:
+          Set-Cookie:
+            description: refreshToken 쿠키 삭제 (Max-Age=0)
+            schema: { type: string }
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 로그아웃되었습니다. }
+      400:
+        description: 유효하지 않은 리프레시 토큰
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 유효하지 않은 리프레시 토큰입니다. }
+      401:
+        description: 액세스 토큰 없음/만료
+
+/auth/refresh:
+  post:
+    tags: [Auth]
+    summary: 토큰 재발급
+    description: 토큰을 재발급합니다. refreshToken은 쿠키로 전달됩니다.
+    parameters:
+      - in: cookie
+        name: refreshToken
+        required: true
+        schema: { type: string }
+    responses:
+      200:
+        description: 재발급 성공
+        headers:
+          Set-Cookie:
+            description: 새 refreshToken 쿠키
+            schema: { type: string }
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken: { type: string, example: <새 token> }
+                tokenType: { type: string, example: Bearer }
+                expiresIn: { type: integer, example: 3600 }
+      400:
+        description: 유효하지 않은 리프레시 토큰
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 유효하지 않은 리프레시 토큰입니다. }
+
+/auth/google:
+  get:
+    tags: [Auth]
+    summary: 구글 로그인 시작
+    description: 구글 로그인 화면으로 리다이렉트합니다.
+    responses:
+      302:
+        description: 구글 로그인 화면으로 리다이렉트
+        headers:
+          Location: { schema: { type: string } }
+
+/auth/google/callback:
+  get:
+    tags: [Auth]
+    summary: 구글 로그인 콜백
+    description: 구글 인증 후 호출됩니다. refreshToken 쿠키를 설정하고 프론트로 리다이렉트합니다.
+    parameters:
+      - in: query
+        name: code
+        schema: { type: string }
+    responses:
+      302:
+        description: 프론트로 리다이렉트
+        headers:
+          Set-Cookie: { schema: { type: string } }

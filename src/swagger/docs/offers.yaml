@@ -1,0 +1,163 @@
+/offers/{id}/accept:
+  post:
+    tags: [Offers]
+    summary: 교환 제안 승인
+    description: >
+      판매자가 본인의 판매글에 들어온 대기 중인 교환 제안을 승인하여,
+      판매 중인 포토카드 1장과 제안자가 제시한 포토카드 1장의 소유권을 맞교환합니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: 승인할 교환 제안 ID (exchange_offers.id)
+        schema: { type: integer, minimum: 1 }
+        example: 21
+    responses:
+      200:
+        description: 교환 제안 승인 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, status]
+              properties:
+                id: { type: integer, description: 승인된 교환 제안 ID, example: 21 }
+                status: { type: string, description: 승인 완료 시 ACCEPTED, example: ACCEPTED }
+      400:
+        description: Path Parameter의 ID 형식 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 잘못된 요청값입니다. }
+      401:
+        description: 로그인하지 않았거나 인증이 만료됨
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 인증이 필요합니다. }
+      403:
+        description: 해당 교환 제안이 속한 판매글의 판매자가 아님
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 본인 판매글의 교환 제안만 승인할 수 있습니다. }
+      404:
+        description: 교환 제안이 존재하지 않음
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 교환 제안을 찾을 수 없습니다. }
+      409:
+        description: 이미 처리된 제안, 판매글 품절·취소, 수량 부족, 카드 상태 충돌
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string }
+            examples:
+              alreadyProcessed:
+                summary: 이미 처리된 교환 제안
+                value: { message: 이미 처리된 교환 제안입니다. }
+              insufficient:
+                summary: 판매 수량 부족
+                value: { message: 교환 가능한 포토카드 수량이 부족합니다. }
+                
+/offers/{id}:
+
+  delete:
+    tags: [Offers]
+    summary: 교환 제안 취소
+    description: 사용자가 본인이 생성한 대기 중인 교환 제안을 취소하고, 교환 제시 중이었던 포토카드 1장을 다시 보유 상태로 변경합니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: 취소할 교환 제안 ID (exchange_offers.id)
+        schema: { type: integer, minimum: 1 }
+        example: 21
+    responses:
+      204:
+        description: 교환 제안 취소 성공 (Response Body 없음)
+      400:
+        description: Path Parameter의 ID 형식 오류
+      401:
+        description: 로그인하지 않았거나 인증이 만료됨
+      403:
+        description: 본인이 생성한 교환 제안이 아님
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 본인이 제시한 교환 제안만 취소할 수 있습니다. }
+      404:
+        description: 교환 제안이 존재하지 않음
+      409:
+        description: 이미 승인·거절·취소되어 처리할 수 없는 교환 제안
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 이미 처리된 교환 제안입니다. }
+
+/offers/{id}/reject:
+  post:
+    tags: [Offers]
+    summary: 교환 제안 거절
+    description: 판매자가 본인의 판매글에 들어온 대기 중인 교환 제안을 거절하고, 제안자가 제시한 포토카드 1장을 다시 보유 상태로 변경합니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: 거절할 교환 제안 ID (exchange_offers.id)
+        schema: { type: integer, minimum: 1 }
+        example: 21
+    responses:
+      200:
+        description: 교환 제안 거절 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, status]
+              properties:
+                id: { type: integer, description: 거절된 교환 제안 ID, example: 21 }
+                status: { type: string, description: 거절 완료 시 REJECTED, example: REJECTED }
+      400:
+        description: Path Parameter의 ID 형식 오류
+      401:
+        description: 로그인하지 않았거나 인증이 만료됨
+      403:
+        description: 해당 교환 제안이 속한 판매글의 판매자가 아님
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 본인 판매글의 교환 제안만 거절할 수 있습니다. }
+      404:
+        description: 교환 제안이 존재하지 않음
+      409:
+        description: 이미 승인·거절·취소되어 처리할 수 없는 교환 제안
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 이미 처리된 교환 제안입니다. }                

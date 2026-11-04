@@ -1,0 +1,56 @@
+/random-points/draw:
+  post:
+    tags: [RandomPoints]
+    summary: 랜덤 포인트 뽑기
+    description: >
+      로그인 사용자가 하루 최대 3회 랜덤 포인트를 뽑아 1회당 5~15P를 획득합니다.
+      사용 횟수는 한국 시간(KST) 자정에 초기화됩니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        description: 하나의 뽑기 동작을 식별하는 고유 요청 ID (UUID 형식 권장, 같은 동작을 재전송할 때 동일한 값 사용)
+        schema: { type: string }
+        example: b1e3d0a6-450e-4f83-9c66-a5df75a1d493
+    responses:
+      200:
+        description: 랜덤 포인트 뽑기 성공 또는 동일 요청의 기존 성공 결과 재반환
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [earned, points, randomPoint]
+              properties:
+                earned: { type: integer, description: 이번 뽑기로 획득한 포인트 (5~15), example: 9 }
+                points: { type: integer, description: 뽑기 완료 후 사용자의 총 보유 포인트, example: 129 }
+                randomPoint:
+                  type: object
+                  description: 랜덤 포인트 이용 현황
+                  properties:
+                    used: { type: integer, description: 현재 KST 날짜에 사용한 뽑기 횟수, example: 2 }
+                    limit: { type: integer, description: 일일 최대 뽑기 횟수 (고정값 3), example: 3 }
+                    nextResetAt: { type: string, format: date-time, description: 다음 초기화 시각, example: '2026-10-26T15:00:00.000Z' }
+      400:
+        description: Idempotency-Key 요청 헤더 누락, 빈 값 또는 정해진 형식 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: Idempotency-Key 요청 헤더는 필수입니다. }
+                fields:
+                  type: object
+                  additionalProperties: { type: string }
+                  example: { Idempotency-Key: 요청 ID를 입력해 주세요. }
+      401:
+        description: 로그인하지 않았거나 인증이 만료됨
+      409:
+        description: 새로운 뽑기 요청이지만 오늘 허용된 3회의 뽑기를 모두 사용함
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 오늘의 랜덤 포인트 뽑기 횟수를 모두 사용했습니다. }

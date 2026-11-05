@@ -1,4 +1,4 @@
-import { badRequest } from "./http-error.js";
+import { badRequest } from "#utils/http-error.js";
 
 // 페이지 목록 공통 : ?page=2&pageSize = 12 -> {page, pageSize, offset}
 

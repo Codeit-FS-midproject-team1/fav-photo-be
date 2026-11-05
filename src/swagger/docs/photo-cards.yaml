@@ -55,13 +55,24 @@
                 id: { type: integer, example: 101 }
                 creatorId: { type: integer, example: 7 }
                 name: { type: string, example: 우리집 앞마당 }
-                description: { type: string, nullable: true, example: 가을에 촬영한 풍경 }
+                description:
+                  { type: string, nullable: true, example: 가을에 촬영한 풍경 }
                 method: { type: string, enum: [PHOTO, CRAFT, AI, ETC] }
-                genre: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+                genre:
+                  {
+                    type: string,
+                    enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC],
+                  }
                 price: { type: integer, example: 100 }
                 totalQuantity: { type: integer, example: 5 }
-                imageUrl: { type: string, example: 'https://example.com/photo.png' }
-                createdAt: { type: string, format: date-time, example: '2026-10-26T02:00:00.000Z' }
+                imageUrl:
+                  { type: string, example: "https://example.com/photo.png" }
+                createdAt:
+                  {
+                    type: string,
+                    format: date-time,
+                    example: "2026-10-26T02:00:00.000Z",
+                  }
       400:
         description: 잘못된 요청값
         content:
@@ -76,7 +87,10 @@
                 value: { message: 이미지를 등록해주세요. }
               imageFormat:
                 summary: 이미지 형식 오류
-                value: { message: 'JPG, PNG, WebP 형식의 이미지만 등록할 수 있습니다.' }
+                value:
+                  {
+                    message: "JPG, PNG, WebP 형식의 이미지만 등록할 수 있습니다.",
+                  }
               imageSize:
                 summary: 이미지 크기 초과
                 value: { message: 이미지 크기는 10MB 이하여야 합니다. }
@@ -113,4 +127,8 @@
             schema:
               type: object
               properties:
-                message: { type: string, example: 이번 달 포토카드 생성 횟수를 초과했습니다. }
+                message:
+                  {
+                    type: string,
+                    example: 이번 달 포토카드 생성 횟수를 초과했습니다.,
+                  }

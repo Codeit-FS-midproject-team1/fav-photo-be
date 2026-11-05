@@ -32,7 +32,7 @@ export class AuthService {
 
   async login({ email, password }) {
     const user = await this.authRepository.findByEmail(email);
-    if (!user || !user.password) throw unauthorized();
+    if (!user || !user.password || user.deletedAt) throw unauthorized();
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw unauthorized();

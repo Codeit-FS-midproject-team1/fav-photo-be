@@ -1,5 +1,5 @@
-import { unauthorized } from "../utils/http-error.js";
-import { verifyToken } from "../utils/token.js";
+import { unauthorized } from "#utils/http-error.js";
+import { verifyToken } from "#utils/token.js";
 
 export const createRequireAuth =
   ({ userRepository }) =>

@@ -1,13 +1,9 @@
-import { db } from "./prisma/db.js";
-import { UserRepository } from "./repositories/user.repository.js";
-import { UserService } from "./services/user.service.js";
-import { UserController } from "./controllers/user.controller.js";
-import { createRequireAuth } from "./middlewares/auth.middleware.js";
-import { createApiRouter } from "./routes/index.js";
-import { AuthRepository } from "./repositories/auth.repository.js";
-import { AuthService } from "./services/auth.service.js";
-import { AuthController } from "./controllers/auth.controller.js";
-
+import { db } from "#prisma/db.js";
+import { UserRepository } from "#repositories/user.repository.js";
+import { UserService } from "#services/user.service.js";
+import { UserController } from "#controllers/user.controller.js";
+import { createRequireAuth } from "#middlewares/auth.middleware.js";
+import { createApiRouter } from "#routes/index.js";
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
 const authRepository = new AuthRepository(db);

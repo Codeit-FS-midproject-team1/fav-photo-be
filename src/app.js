@@ -12,6 +12,10 @@ export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("🎴 최애의 포토 서버가 작동 중일걸요?");
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });

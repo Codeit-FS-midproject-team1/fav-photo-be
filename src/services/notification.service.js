@@ -2,15 +2,13 @@ import { badRequest, notFound } from "../utils/http-error.js";
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
+const LIMIT_REASON = `1~${MAX_LIMIT} 사이로 입력해 주세요.`;
 
-// 양의 정수가 아니면 400
-const toPositiveInt = (value, name) => {
+// 양의 정수가 아니면 400  message 는 공통 문구, 이유는 fields 에
+const toPositiveInt = (value, field, reason) => {
   const n = Number(value);
-  if (!Number.isInteger(n) || n < 1) {
-    throw badRequest(`${name}는 1 이상의 정수이어야 합니다.`, {
-      [name]: "1 이상의 정수",
-    });
-  }
+  if (!Number.isInteger(n) || n < 1)
+    throw badRequest(undefined, { [field]: reason });
   return n;
 };
 
@@ -21,16 +19,12 @@ export class NotificationService {
 
   async getNotifications(userId, query) {
     const cursor = query.cursor
-      ? toPositiveInt(query.cursor, "cursor")
+      ? toPositiveInt(query.cursor, "cursor", "올바른 커서가 아닙니다.")
       : undefined;
     const limit = query.limit
-      ? toPositiveInt(query.limit, "limit")
+      ? toPositiveInt(query.limit, "limit", LIMIT_REASON)
       : DEFAULT_LIMIT;
-    if (limit > MAX_LIMIT) {
-      throw badRequest(`limit는 1~${MAX_LIMIT} 사이이어야 합니다.`, {
-        limit: `1~${MAX_LIMIT}`,
-      });
-    }
+    if (limit > MAX_LIMIT) throw badRequest(undefined, { limit: LIMIT_REASON });
 
     // 하나 더 가져와서 다음 페이지가 있는지 본다
     const rows = await this.notificationRepository.findManyByUser({
@@ -59,10 +53,10 @@ export class NotificationService {
 
   async markRead(userId, id) {
     const updated = await this.notificationRepository.markRead({
-      id: toPositiveInt(id, "id"),
+      id: toPositiveInt(id, "id", "올바른 알림 번호가 아닙니다."),
       userId,
     });
-    if (!updated) throw notFound("알림을 찾을 수 없습니다.");
+    if (!updated) throw notFound("존재하지 않는 알림입니다.");
   }
 
   // 다른 기능(가입, 구매, 교환)에서 부른다. 거래 트랜잭션 안이면 tx를 넘긴다.

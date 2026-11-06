@@ -8,5 +8,5 @@ export const createApiRouter = ({
   authController,
 }) =>
   Router()
-    .use("/auth", createAuthRouter({ authController }))
+    .use("/auth", createAuthRouter({ authController, requireAuth }))
     .use("/users", createUserRouter({ userController, requireAuth }));

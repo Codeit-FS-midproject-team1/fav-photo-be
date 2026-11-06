@@ -78,7 +78,11 @@ export class AuthService {
       Date.now() + 7 * 24 * 60 * 60 * 1000,
     ).toISOString();
 
-    await this.authRepository.deleteRefreshTokenByHash(tokenHash);
+    const deletedToken =
+      await this.authRepository.deleteRefreshTokenByHash(tokenHash);
+
+    if (!deletedToken) throw unauthorized();
+
     await this.authRepository.createRefreshToken({
       userId: storedToken.userId,
       tokenHash: nextTokenHash,

@@ -1,4 +1,4 @@
-import { notFound } from "../utils/http-error.js";
+import { notFound } from "#utils/http-error.js";
 
 export class UserService {
   constructor({ userRepository }) {

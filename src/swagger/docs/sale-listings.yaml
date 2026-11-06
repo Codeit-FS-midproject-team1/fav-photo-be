@@ -19,14 +19,23 @@
       - in: query
         name: genre
         description: 장르 필터 (method, genre, soldOut 중 하나만 사용)
-        schema: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+        schema:
+          {
+            type: string,
+            enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC],
+          }
       - in: query
         name: soldOut
         description: 품절 여부 필터 (true 품절, false 판매 중) (method, genre, soldOut 중 하나만 사용)
         schema: { type: boolean }
       - in: query
         name: sort
-        schema: { type: string, enum: [latest, oldest, priceLow, priceHigh], default: latest }
+        schema:
+          {
+            type: string,
+            enum: [latest, oldest, priceLow, priceHigh],
+            default: latest,
+          }
       - in: query
         name: cursor
         description: 다음 페이지 위치. 직전 응답의 nextCursor 값
@@ -50,17 +59,54 @@
                     type: object
                     properties:
                       id: { type: integer, description: 판매글 id, example: 7 }
-                      status: { type: string, enum: [ON_SALE, SOLD_OUT], example: ON_SALE }
-                      price: { type: integer, description: 장당 가격 (1~1000P), example: 40 }
-                      saleQuantity: { type: integer, description: 판매 등록 장수, example: 3 }
-                      remainingQuantity: { type: integer, description: 남은 장수 (0이면 SOLD_OUT), example: 2 }
+                      status:
+                        {
+                          type: string,
+                          enum: [ON_SALE, SOLD_OUT],
+                          example: ON_SALE,
+                        }
+                      price:
+                        {
+                          type: integer,
+                          description: 장당 가격 (1~1000P),
+                          example: 40,
+                        }
+                      saleQuantity:
+                        {
+                          type: integer,
+                          description: 판매 등록 장수,
+                          example: 3,
+                        }
+                      remainingQuantity:
+                        {
+                          type: integer,
+                          description: 남은 장수 (0이면 SOLD_OUT),
+                          example: 2,
+                        }
                       seller:
                         type: object
                         properties:
-                          id: { type: integer, nullable: true, description: 탈퇴한 사용자면 null, example: 3 }
-                          nickname: { type: string, description: 탈퇴한 사용자면 "탈퇴한 사용자", example: 포토러버 }
-                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
-                      createdAt: { type: string, format: date-time, description: 판매글 등록 시각, example: '2026-10-21T09:00:00.000Z' }
+                          id:
+                            {
+                              type: integer,
+                              nullable: true,
+                              description: 탈퇴한 사용자면 null,
+                              example: 3,
+                            }
+                          nickname:
+                            {
+                              type: string,
+                              description: 탈퇴한 사용자면 "탈퇴한 사용자",
+                              example: 포토러버,
+                            }
+                      photoCard: { $ref: "#/components/schemas/PhotoCard" }
+                      createdAt:
+                        {
+                          type: string,
+                          format: date-time,
+                          description: 판매글 등록 시각,
+                          example: "2026-10-21T09:00:00.000Z",
+                        }
                 nextCursor:
                   type: string
                   nullable: true
@@ -92,7 +138,10 @@
                 value: { message: 올바른 정렬 기준을 선택해주세요. }
               limit:
                 summary: limit 범위 오류
-                value: { message: 한 번에 가져올 개수는 1~50 사이의 정수여야 합니다. }
+                value:
+                  {
+                    message: 한 번에 가져올 개수는 1~50 사이의 정수여야 합니다.,
+                  }
               cursor:
                 summary: 잘못된 cursor
                 value: { message: 올바르지 않은 cursor입니다. }
@@ -130,10 +179,16 @@
                     properties:
                       id: { type: integer, example: 21 }
                       status: { type: string, example: PENDING }
-                      description: { type: string, example: 이 카드랑 바꾸고 싶어요! }
-                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
-                      offerer: { $ref: '#/components/schemas/UserSummary' }
-                      createdAt: { type: string, format: date-time, example: '2026-10-26T06:00:00.000Z' }
+                      description:
+                        { type: string, example: 이 카드랑 바꾸고 싶어요! }
+                      photoCard: { $ref: "#/components/schemas/PhotoCard" }
+                      offerer: { $ref: "#/components/schemas/UserSummary" }
+                      createdAt:
+                        {
+                          type: string,
+                          format: date-time,
+                          example: "2026-10-26T06:00:00.000Z",
+                        }
       400:
         description: Path Parameter의 ID 형식 오류
       401:
@@ -145,4 +200,4 @@
             schema:
               type: object
               properties:
-                message: { type: string, example: 판매글을 찾을 수 없습니다. }                
+                message: { type: string, example: 판매글을 찾을 수 없습니다. }

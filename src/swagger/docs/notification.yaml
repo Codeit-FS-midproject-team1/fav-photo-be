@@ -59,14 +59,30 @@
                         nullable: true
                         description: 눌렀을 때 이동할 화면
                         example: /marketplace/7
-                      isRead: { type: boolean, description: 읽음 여부, example: false }
-                      createdAt: { type: string, format: date-time, description: 알림 생성 시각, example: '2026-10-23T04:10:00.000Z' }
+                      isRead:
+                        {
+                          type: boolean,
+                          description: 읽음 여부,
+                          example: false,
+                        }
+                      createdAt:
+                        {
+                          type: string,
+                          format: date-time,
+                          description: 알림 생성 시각,
+                          example: "2026-10-23T04:10:00.000Z",
+                        }
                 nextCursor:
                   type: string
                   nullable: true
                   description: 다음 요청에 보낼 값. null이면 마지막 페이지
                   example: eyJpZCI6MzB9
-                unreadCount: { type: integer, description: 안 읽은 알림 전체 개수, example: 3 }
+                unreadCount:
+                  {
+                    type: integer,
+                    description: 안 읽은 알림 전체 개수,
+                    example: 3,
+                  }
       400:
         description: limit 범위 밖, 잘못된 cursor
       401:

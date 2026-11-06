@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   validateBody,
   validateParams,
-} from "../middlewares/validate.middleware";
+} from "../middlewares/validate.middleware.js";
 import { signupSchema, loginSchema } from '../schemas/auth.schema.js';
 
 export const createAuthRouter = ({ authController }) =>

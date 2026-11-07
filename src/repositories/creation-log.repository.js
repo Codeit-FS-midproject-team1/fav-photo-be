@@ -14,6 +14,8 @@ export class CreationLogRepository {
     if (existing) return existing;
     return this.#model(tx).upsert({
       create: { userId, yearMonth, createdCount: 0 },
+      update: {},
+      conflictOn: { userId, yearMonth },
     });
   }
 

@@ -7,7 +7,7 @@ export class PhotoCardController {
   create = async (req, res) => {
     const photoCard = await this.photoCardService.create(
       req.userId,
-      req.body,
+      req.validated.body,
       req.file,
     );
     res.status(201).json(photoCard);

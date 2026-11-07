@@ -77,7 +77,7 @@ export class ExchangeOfferService {
     if (listing.status !== "ON_SALE") {
       throw badRequest("판매 중인 판매글에만 교환을 제안할 수 있습니다.");
     }
-    if (listing.reminingQuantity <= 0) {
+    if (listing.remainingQuantity <= 0) {
       throw badRequest("교환 가능한 카드의 재고가 없습니다.");
     }
     if (listing.sellerId === userId) {

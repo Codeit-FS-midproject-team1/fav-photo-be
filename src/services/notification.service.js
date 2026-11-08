@@ -1,13 +1,14 @@
-import { badRequest, notFound } from "../utils/http-error.js";
+import { badRequest, notFound } from "#utils/http-error.js";
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
+const MAX_INT4 = 2147483647; // DB int 컬럼의 최댓값
 const LIMIT_REASON = `1~${MAX_LIMIT} 사이로 입력해 주세요.`;
 
-// 양의 정수가 아니면 400  message 는 공통 문구, 이유는 fields 에
+// 저장 가능한 양의 정수가 아니면 400. message 는 공통 문구, 이유는 fields 에
 const toPositiveInt = (value, field, reason) => {
   const n = Number(value);
-  if (!Number.isInteger(n) || n < 1)
+  if (!Number.isInteger(n) || n < 1 || n > MAX_INT4)
     throw badRequest(undefined, { [field]: reason });
   return n;
 };
@@ -18,12 +19,15 @@ export class NotificationService {
   }
 
   async getNotifications(userId, query) {
-    const cursor = query.cursor
-      ? toPositiveInt(query.cursor, "cursor", "올바른 커서가 아닙니다.")
-      : undefined;
-    const limit = query.limit
-      ? toPositiveInt(query.limit, "limit", LIMIT_REASON)
-      : DEFAULT_LIMIT;
+    const cursor =
+      query.cursor !== undefined
+        ? toPositiveInt(query.cursor, "cursor", "올바른 커서가 아닙니다.")
+        : undefined;
+    const limit =
+      query.limit !== undefined
+        ? toPositiveInt(query.limit, "limit", LIMIT_REASON)
+        : DEFAULT_LIMIT;
+
     if (limit > MAX_LIMIT) throw badRequest(undefined, { limit: LIMIT_REASON });
 
     // 하나 더 가져와서 다음 페이지가 있는지 본다

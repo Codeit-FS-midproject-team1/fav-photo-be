@@ -8,7 +8,7 @@ const LIMIT_REASON = `1~${MAX_LIMIT} 사이로 입력해 주세요.`;
 // 저장 가능한 양의 정수가 아니면 400. message 는 공통 문구, 이유는 fields 에
 const toPositiveInt = (value, field, reason) => {
   const n = Number(value);
-  if (!Number.isInteger(n) || n < 1 || n > MAX_INT4)
+  if (!/^[1-9]\d*$/.test(value) || n > MAX_INT4)
     throw badRequest(undefined, { [field]: reason });
   return n;
 };

@@ -34,15 +34,21 @@ export class ExchangeOfferController {
     res.status(204).end();
   };
 
-    rejectOffer = async (req, res) => {
+  rejectOffer = async (req, res) => {
     const offerId = req.params.id;
     const userId = req.userId;
 
-    const offer = await this.exchangeOfferService.rejectOffer(
-      offerId,
-      userId,
-    );
+    const offer = await this.exchangeOfferService.rejectOffer(offerId, userId);
 
     res.status(200).json(offer);
+  };
+
+  acceptOffer = async (req, res) => {
+    const offerId = req.params.id;
+    const userId = req.userId;
+
+    const result = await this.exchangeOfferService.acceptOffer(offerId, userId);
+
+    res.status(200).json(result);
   };
 }

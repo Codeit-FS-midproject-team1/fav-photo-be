@@ -14,6 +14,7 @@ import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-li
 import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.repository.js";
 import { ExchangeOfferService } from "./services/exchange-offer.service.js";
 import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
+import { ExchangeOfferTradeRepository } from "./repositories/exchange-offer-trade.repository.js";
 
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
@@ -22,6 +23,7 @@ const authRepository = new AuthRepository(db);
 const exchangeOfferRepository = new ExchangeOfferRepository(db);
 const saleListingRepository = new ExchangeOfferListingRepository(db);
 const cardRepository = new ExchangeOfferCardRepository(db);
+const tradeRepository = new ExchangeOfferTradeRepository(db);
 
 // ===== 2) 공통 service (팀 문서 4-4장) =====
 
@@ -33,6 +35,7 @@ const exchangeOfferService = new ExchangeOfferService({
   exchangeOfferRepository,
   saleListingRepository,
   cardRepository,
+  tradeRepository,
   db,
 });
 

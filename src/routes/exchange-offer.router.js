@@ -19,5 +19,6 @@ export const createExchangeOfferActionRouter = ({
 }) => {
   return Router()
     .delete("/:id", requireAuth, exchangeOfferController.cancelOffer)
-    .post("/:id/reject", requireAuth, exchangeOfferController.rejectOffer);
+    .post("/:id/reject", requireAuth, exchangeOfferController.rejectOffer)
+    .post("/:id/accept", requireAuth, exchangeOfferController.acceptOffer);
 };

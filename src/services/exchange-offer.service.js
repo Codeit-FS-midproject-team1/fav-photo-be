@@ -11,11 +11,13 @@ export class ExchangeOfferService {
     exchangeOfferRepository,
     saleListingRepository,
     cardRepository,
+    userRepository,
     db,
   }) {
     this.exchangeOfferRepository = exchangeOfferRepository;
     this.saleListingRepository = saleListingRepository;
     this.cardRepository = cardRepository;
+    this.userRepository = userRepository;
     this.db = db;
   }
 
@@ -44,7 +46,60 @@ export class ExchangeOfferService {
       offererId,
     });
 
-    return offers;
+    const items = await Promise.all(
+      offers.map(async (offer) => {
+        const cardItem = await this.cardRepository.findById(
+          offer.offeredCardItemId,
+        );
+
+        if (!cardItem) {
+          throw new Error("교환 제안에 연결된 카드를 찾을 수 없습니다.");
+        }
+
+        const [photoCard, offerer] = await Promise.all([
+          this.cardRepository.findPhotoCardById(cardItem.photoCardId),
+          this.userRepository.findById(offer.offererId),
+        ]);
+
+        if (!photoCard || !offerer) {
+          throw new Error("교환 제안의 상세 정보를 찾을 수 없습니다.");
+        }
+
+        const creator = await this.userRepository.findById(photoCard.creatorId);
+
+        if (!creator) {
+          throw new Error("포토카드 제작자 정보를 찾을 수 없습니다.");
+        }
+
+        return {
+          id: offer.id,
+          status: offer.status,
+          description: offer.description,
+          photoCard: {
+            id: photoCard.id,
+            name: photoCard.name,
+            description: photoCard.description,
+            method: photoCard.method,
+            genre: photoCard.genre,
+            price: photoCard.price,
+            totalQuantity: photoCard.totalQuantity,
+            imageUrl: photoCard.imageUrl,
+            creator: {
+              id: creator.id,
+              nickname: creator.nickname,
+            },
+            createdAt: photoCard.createdAt,
+          },
+          offerer: {
+            id: offerer.id,
+            nickname: offerer.nickname,
+          },
+          createdAt: offer.createdAt,
+        };
+      }),
+    );
+
+    return { items };
   }
 
   async createOffer(listingId, userId, data) {

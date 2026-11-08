@@ -33,6 +33,7 @@ const exchangeOfferService = new ExchangeOfferService({
   exchangeOfferRepository,
   saleListingRepository,
   cardRepository,
+  userRepository,
   db,
 });
 

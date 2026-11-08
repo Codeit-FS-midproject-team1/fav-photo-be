@@ -9,7 +9,7 @@ export class ExchangeOfferController {
       listingId,
       userId,
     );
-    res.json({ items: offers });
+    res.json(offers);
   };
   createOffer = async (req, res) => {
     const listingId = req.params.id;

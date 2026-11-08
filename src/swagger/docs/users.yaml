@@ -242,11 +242,20 @@
       - in: query
         name: genre
         description: 장르 필터
-        schema: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+        schema:
+          {
+            type: string,
+            enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC],
+          }
       - in: query
         name: sort
         description: 정렬 기준 (동일 값은 photo_cards.id 오름차순)
-        schema: { type: string, enum: [LATEST, OLDEST, PRICE_ASC, PRICE_DESC], default: LATEST }
+        schema:
+          {
+            type: string,
+            enum: [LATEST, OLDEST, PRICE_ASC, PRICE_DESC],
+            default: LATEST,
+          }
       - in: query
         name: page
         schema: { type: integer, minimum: 1, default: 1 }
@@ -268,7 +277,7 @@
                   items:
                     type: object
                     properties:
-                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
+                      photoCard: { $ref: "#/components/schemas/PhotoCard" }
                       quantity:
                         type: integer
                         description: 현재 보유(HELD) 중인 해당 원본 카드의 실제 장수
@@ -277,7 +286,7 @@
                         type: string
                         format: date-time
                         description: 현재 보유 중인 동일 원본 카드들의 가장 최근 획득 일시
-                        example: '2026-10-28T08:00:00.000Z'
+                        example: "2026-10-28T08:00:00.000Z"
                 summary:
                   type: object
                   properties:
@@ -294,7 +303,12 @@
                   properties:
                     page: { type: integer, example: 1 }
                     pageSize: { type: integer, example: 4 }
-                    totalItems: { type: integer, description: 필터 적용 후 전체 카드 종류 수, example: 5 }
+                    totalItems:
+                      {
+                        type: integer,
+                        description: 필터 적용 후 전체 카드 종류 수,
+                        example: 5,
+                      }
                     totalPages: { type: integer, example: 2 }
                     hasNext: { type: boolean, example: true }
       400:
@@ -351,11 +365,16 @@
         schema: { type: string, enum: [PHOTO, CRAFT, AI, ETC] }
       - in: query
         name: genre
-        schema: { type: string, enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC] }
+        schema:
+          {
+            type: string,
+            enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC],
+          }
       - in: query
         name: status
         description: 거래 상태 필터 (미전달 시 전체)
-        schema: { type: string, enum: [ON_SALE, SOLD_OUT, OFFER_PENDING, EXCHANGED] }
+        schema:
+          { type: string, enum: [ON_SALE, SOLD_OUT, OFFER_PENDING, EXCHANGED] }
       - in: query
         name: page
         schema: { type: integer, minimum: 1, default: 1 }
@@ -388,7 +407,7 @@
                       status:
                         type: string
                         enum: [ON_SALE, SOLD_OUT, OFFER_PENDING, EXCHANGED]
-                      photoCard: { $ref: '#/components/schemas/PhotoCard' }
+                      photoCard: { $ref: "#/components/schemas/PhotoCard" }
                       quantity:
                         type: integer
                         description: 판매 잔여 수량 (OFFER는 항상 1)
@@ -402,7 +421,7 @@
                         type: string
                         format: date-time
                         description: 판매글 등록 또는 교환 제안 생성 일시
-                        example: '2026-10-28T09:00:00.000Z'
+                        example: "2026-10-28T09:00:00.000Z"
                 summary:
                   type: object
                   properties:
@@ -418,7 +437,12 @@
                   properties:
                     page: { type: integer, example: 1 }
                     pageSize: { type: integer, example: 4 }
-                    totalItems: { type: integer, description: 필터 적용 후 전체 항목 수, example: 5 }
+                    totalItems:
+                      {
+                        type: integer,
+                        description: 필터 적용 후 전체 항목 수,
+                        example: 5,
+                      }
                     totalPages: { type: integer, example: 2 }
                     hasNext: { type: boolean, example: true }
       400:
@@ -455,4 +479,4 @@
             schema:
               type: object
               properties:
-                message: { type: string, example: 인증이 필요합니다. }                
+                message: { type: string, example: 인증이 필요합니다. }

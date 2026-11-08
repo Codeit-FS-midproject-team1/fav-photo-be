@@ -13,6 +13,18 @@
     "format": "prettier --write .",
     "contract:emit": "prisma contract emit --config prisma.config.js"
   },
+  "imports": {
+    "#app/*": "./src/*",
+    "#prisma/*": "./src/prisma/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#routes/*": "./src/routes/*",
+    "#utils/*": "./src/utils/*",
+    "#controllers/*": "./src/controllers/*",
+    "#services/*": "./src/services/*",
+    "#repositories/*": "./src/repositories/*",
+    "#schemas/*": "./src/schemas/*",
+    "#swagger/*": "./src/swagger/*"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -40,7 +52,8 @@
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
     "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,4 +1,4 @@
-import { HttpError } from "../utils/http-error.js";
+import { HttpError } from "#utils/http-error.js";
 
 // 없는 경로
 export const notFoundHandler = (req, res) => {
@@ -8,12 +8,10 @@ export const notFoundHandler = (req, res) => {
 // 모든 에러 응답은 여기서만 만든다: { message, fields? }
 export const errorHandler = (err, req, res, _next) => {
   if (err instanceof HttpError) {
-    return res
-      .status(err.status)
-      .json({
-        message: err.message,
-        ...(err.fields && { fields: err.fields }),
-      });
+    return res.status(err.status).json({
+      message: err.message,
+      ...(err.fields && { fields: err.fields }),
+    });
   }
   // express.json() 이 깨진 JSON 을 받은 경우
   if (err.type === "entity.parse.failed") {

@@ -22,6 +22,12 @@ export class ExchangeOfferCardRepository {
       .first();
   }
 
+  findPhotoCardById(photoCardId, tx) {
+    return (tx ?? this.db).orm.public.PhotoCard.where({
+      id: photoCardId,
+    }).first();
+  }
+
   markAsOffered(cardItemId, ownerId, offerId, tx) {
     const query = this.#model(tx).where({
       id: cardItemId,

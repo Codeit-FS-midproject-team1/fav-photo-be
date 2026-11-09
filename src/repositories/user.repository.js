@@ -11,4 +11,16 @@ export class UserRepository {
   findById(id, tx) {
     return this.#model(tx).where({ id }).first();
   }
+
+  findByNickname(nickname, tx) {
+    return this.#model(tx).where({ nickname }).first();
+  }
+
+  patchNickname(userId, nickname, tx) {
+    return this.#model(tx).where({ id: userId }).update({ nickname });
+  }
+
+  patchPassword(userId, password, tx) {
+    return this.#model(tx).where({ id: userId }).update({ password });
+  }
 }

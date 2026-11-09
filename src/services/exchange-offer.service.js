@@ -2,6 +2,7 @@ import {
   badRequest,
   notFound,
   unauthorized,
+  forbidden,
   conflict,
 } from "../utils/http-error.js";
 
@@ -174,6 +175,114 @@ export class ExchangeOfferService {
         throw conflict("카드가 이미 다른 판매 또는 교환에 사용 중입니다.");
       }
       return offer;
+    });
+  }
+
+  async cancelOffer(offerId, userId) {
+    const id = Number(offerId);
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      throw badRequest("교환 제안 ID는 1 이상의 정수여야 합니다.");
+    }
+
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      throw unauthorized();
+    }
+
+    const offer = await this.exchangeOfferRepository.findById(id);
+
+    if (!offer) {
+      throw notFound("교환 제안을 찾을 수 없습니다.");
+    }
+
+    if (offer.offererId !== userId) {
+      throw forbidden("본인이 제안한 교환만 취소할 수 있습니다.");
+    }
+
+    if (offer.status !== "PENDING") {
+      throw conflict("대기 중인 교환 제안만 취소할 수 있습니다.");
+    }
+
+    await this.db.transaction(async (tx) => {
+      const updatedCount =
+        await this.exchangeOfferRepository.updateStatusIfPending(
+          id,
+          "CANCELED",
+          tx,
+        );
+
+      if (updatedCount !== 1) {
+        throw conflict("이미 처리된 교환 제안입니다.");
+      }
+
+      const restoredCount = await this.cardRepository.restoreFromOffer(
+        offer.offeredCardItemId,
+        userId,
+        id,
+        tx,
+      );
+
+      if (restoredCount !== 1) {
+        throw conflict("교환 제안에 사용한 카드를 복구할 수 없습니다.");
+      }
+    });
+  }
+
+  async rejectOffer(offerId, userId) {
+    const id = Number(offerId);
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      throw badRequest("교환 제안 ID는 1 이상의 정수여야 합니다.");
+    }
+
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      throw unauthorized();
+    }
+
+    const offer = await this.exchangeOfferRepository.findById(id);
+
+    if (!offer) {
+      throw notFound("교환 제안을 찾을 수 없습니다.");
+    }
+
+    const listing = await this.saleListingRepository.findById(offer.listingId);
+
+    if (!listing || listing.status === "CANCELED") {
+      throw notFound("판매글을 찾을 수 없습니다.");
+    }
+
+    if (listing.sellerId !== userId) {
+      throw forbidden("판매자만 교환 제안을 거절할 수 있습니다.");
+    }
+
+    if (offer.status !== "PENDING") {
+      throw conflict("대기 중인 교환 제안만 거절할 수 있습니다.");
+    }
+
+    return this.db.transaction(async (tx) => {
+      const updatedCount =
+        await this.exchangeOfferRepository.updateStatusIfPending(
+          id,
+          "REJECTED",
+          tx,
+        );
+
+      if (updatedCount !== 1) {
+        throw conflict("이미 처리된 교환 제안입니다.");
+      }
+
+      const restoredCount = await this.cardRepository.restoreFromOffer(
+        offer.offeredCardItemId,
+        offer.offererId,
+        id,
+        tx,
+      );
+
+      if (restoredCount !== 1) {
+        throw conflict("교환 제안에 사용한 카드를 복구할 수 없습니다.");
+      }
+
+      return this.exchangeOfferRepository.findById(id, tx);
     });
   }
 }

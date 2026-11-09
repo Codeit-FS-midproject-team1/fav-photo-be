@@ -3,11 +3,12 @@ export class ExchangeOfferCardRepository {
     this.db = db;
   }
 
-  #medel(tx) {
+  #model(tx) {
     return (tx ?? this.db).orm.public.CardItem;
   }
+
   findById(id, tx) {
-    return this.#medel(tx).where({ id }).first();
+    return this.#model(tx).where({ id }).first();
   }
 
   findPhotoCardById(photoCardId, tx) {
@@ -17,7 +18,7 @@ export class ExchangeOfferCardRepository {
   }
 
   markAsOffered(cardItemId, ownerId, offerId, tx) {
-    const query = this.#medel(tx).where({
+    const query = this.#model(tx).where({
       id: cardItemId,
       ownerId,
       status: "HELD",
@@ -27,5 +28,19 @@ export class ExchangeOfferCardRepository {
       status: "OFFERED",
       offerId,
     });
+  }
+
+  restoreFromOffer(cardItemId, ownerId, offerId, tx) {
+    return this.#model(tx)
+      .where({
+        id: cardItemId,
+        ownerId,
+        status: "OFFERED",
+        offerId,
+      })
+      .updateAndCount({
+        status: "HELD",
+        offerId: null,
+      });
   }
 }

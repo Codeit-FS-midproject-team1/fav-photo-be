@@ -7,6 +7,16 @@ export class ExchangeOfferRepository {
     return (tx ?? this.db).orm.public.ExchangeOffer;
   }
 
+  findById(id, tx) {
+    return this.#model(tx).where({ id }).first();
+  }
+
+  updateStatusIfPending(id, status, tx) {
+    return this.#model(tx)
+      .where({ id, status: "PENDING" })
+      .updateAndCount({ status });
+  }
+
   findByListingId(listingId, { offererId, tx } = {}) {
     let query = this.#model(tx)
       .where({ listingId })

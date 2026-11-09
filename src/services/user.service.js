@@ -36,6 +36,10 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
     if (!user) throw notFound("사용자를 찾을 수 없습니다.");
 
+    if (user.password === null) {
+      throw conflict("비밀번호가 설정되지 않은 계정입니다.");
+    }
+
     const isPasswordValid = await bcrypt.compare(
       currentPassword,
       user.password,

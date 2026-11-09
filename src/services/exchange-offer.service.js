@@ -105,7 +105,7 @@ export class ExchangeOfferService {
   }
 
   async createOffer(listingId, userId, data) {
-    const { offeredCardItemId, description } = data ?? {};
+    const { photoCardId, description } = data ?? {};
 
     const id = Number(listingId);
     if (!Number.isSafeInteger(id) || id <= 0) {
@@ -114,8 +114,8 @@ export class ExchangeOfferService {
     if (!Number.isSafeInteger(userId) || userId <= 0) {
       throw unauthorized();
     }
-    if (!Number.isSafeInteger(offeredCardItemId) || offeredCardItemId <= 0) {
-      throw badRequest("제안할 카드 ID는 1 이상의 정수여야 합니다.");
+    if (!Number.isSafeInteger(photoCardId) || photoCardId <= 0) {
+      throw badRequest("제안할 원본 포토카드 ID는 1 이상의 정수여야 합니다.");
     }
     if (typeof description !== "string" || description.trim().length === 0) {
       throw badRequest("교환 제안 내용을 입력해 주세요.", {
@@ -142,20 +142,6 @@ export class ExchangeOfferService {
       throw badRequest("자신의 판매글에는 교환을 제안할 수 없습니다.");
     }
 
-    const card = await this.cardRepository.findById(offeredCardItemId);
-    if (!card) {
-      throw notFound("제안할 카드를 찾을 수 없습니다.");
-    }
-    if (card.ownerId !== userId) {
-      throw badRequest("본인이 소유한 카드만 교환 제안에 사용할 수 있습니다.");
-    }
-    if (card.status !== "HELD") {
-      throw badRequest("현재 보유 중인 카드만 교환 제안에 사용할 수 있습니다.");
-    }
-    if (card.photoCardId === listing.photoCardId) {
-      throw conflict("동일한 원본 포토카드끼리는 교환할 수 없습니다.");
-    }
-
     return this.db.transaction(async (tx) => {
       const lockedListing =
         await this.saleListingRepository.findByIdForNoKeyUpdate(id, tx);
@@ -176,9 +162,21 @@ export class ExchangeOfferService {
         throw badRequest("자신의 판매글에는 교환을 제안할 수 없습니다.");
       }
 
-      if (card.photoCardId === lockedListing.photoCardId) {
+      if (photoCardId === lockedListing.photoCardId) {
         throw conflict("동일한 원본 포토카드끼리는 교환할 수 없습니다.");
       }
+
+      const card = await this.cardRepository.findHeldCardByPhotoCardId(
+        photoCardId,
+        userId,
+        tx,
+      );
+
+      if (!card) {
+        throw conflict("교환에 사용할 수 있는 보유 카드가 없습니다.");
+      }
+
+      const offeredCardItemId = card.id;
 
       const offer = await this.exchangeOfferRepository.create(
         {

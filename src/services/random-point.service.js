@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { randomInt } from "node:crypto";
 import { setTimeout as sleep } from "node:timers/promises";
 import {
@@ -56,9 +57,17 @@ export class RandomPointService {
       });
     }
 
+    const normalizedKey = idempotencyKey.trim();
+
+    if (Buffer.byteLength(normalizedKey, "utf8") > 128) {
+      throw badRequest("Idempotency-Key는 128바이트 이하여야 합니다.", {
+        "Idempotency-Key": "128바이트 이하로 입력해 주세요.",
+      });
+    }
+
     return {
       userId,
-      idempotencyKey: idempotencyKey.trim(),
+      idempotencyKey: normalizedKey,
     };
   }
 

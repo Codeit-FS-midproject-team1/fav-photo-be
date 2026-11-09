@@ -51,7 +51,7 @@ const notificationService = new NotificationService({
 
 // ===== 3) 기능 service — 도메인별 블록, 자기 블록만 수정 =====
 const userService = new UserService({ userRepository });
-const authService = new AuthService({ authRepository });
+const authService = new AuthService({ authRepository, db});
 // [다운] 마켓
 const saleListingService = new SaleListingService({ saleListingRepository });
 

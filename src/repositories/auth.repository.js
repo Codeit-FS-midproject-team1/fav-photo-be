@@ -19,8 +19,8 @@ export class AuthRepository {
     return this.#model().where({ nickname }).first();
   }
 
-  createUser({ email, nickname, password }) {
-    return this.#model().create({ email, nickname, password });
+  createUser({ email, nickname, password, googleId = null }, tx) {
+    return this.#model(tx).create({ email, nickname, password, googleId });
   }
 
   createRefreshToken({ userId, tokenHash, expiresAt }, tx) {
@@ -37,5 +37,9 @@ export class AuthRepository {
 
   deleteRefreshTokenByHash(tokenHash) {
     return this.#refreshTokenModel().where({ tokenHash }).delete();
+  }
+
+  findByGoogleId(googleId) {
+    return this.#model().where({ googleId }).first();
   }
 }

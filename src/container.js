@@ -27,6 +27,7 @@ import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-li
 import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.repository.js";
 import { ExchangeOfferService } from "./services/exchange-offer.service.js";
 import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
+import { ExchangeOfferTradeRepository } from "./repositories/exchange-offer-trade.repository.js";
 
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
@@ -40,6 +41,7 @@ const saleListingRepository = new SaleListingRepository(db);
 const exchangeOfferRepository = new ExchangeOfferRepository(db);
 const exchangeOfferListingRepository = new ExchangeOfferListingRepository(db);
 const cardRepository = new ExchangeOfferCardRepository(db);
+const tradeRepository = new ExchangeOfferTradeRepository(db);
 
 // ===== 2) 공통 service (팀 문서 4-4장) =====
 // [다운] 알림 — 가입·구매·교환 service 가 notify 로 알림을 만든다
@@ -71,6 +73,7 @@ const exchangeOfferService = new ExchangeOfferService({
   exchangeOfferRepository,
   saleListingRepository: exchangeOfferListingRepository,
   cardRepository,
+  tradeRepository,
   userRepository,
   db,
 });

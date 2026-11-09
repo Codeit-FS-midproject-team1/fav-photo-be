@@ -6,8 +6,16 @@ import {
   notFoundHandler,
 } from "#middlewares/error-handler.middleware.js";
 import { apiRouter } from "./container.js";
+import cors from "cors";
 
 export const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN ?? "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 app.use(cookieParser());

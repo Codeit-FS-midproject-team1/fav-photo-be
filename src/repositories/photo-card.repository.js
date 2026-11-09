@@ -31,6 +31,7 @@ export class PhotoCardRepository {
     }
     if (genre) query = query.where({ genre });
 
+    // 내가 가진 held 카드만 가져오기.
     return query
       .include("creator", (user) => user.select("id", "nickname", "deletedAt"))
       .include("cardItems", (items) => {

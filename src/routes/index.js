@@ -5,6 +5,7 @@ import { createExchangeOfferRouter } from "./exchange-offer.router.js";
 import { createPhotoCardRouter } from "./photo-card.router.js";
 import { createNotificationRouter } from "./notification.router.js";
 import { createSaleListingRouter } from "./sale-listing.router.js";
+import { createMyGalleryRouter } from "./my-gallery.router.js";
 
 export const createApiRouter = ({
   requireAuth,
@@ -15,10 +16,15 @@ export const createApiRouter = ({
   notificationController,
   saleListingController,
   exchangeOfferController,
+  myGalleryController,
 }) =>
   Router()
     .use("/auth", createAuthRouter({ authController, requireAuth }))
     .use("/users", createUserRouter({ userController, requireAuth }))
+    .use(
+      "/users/me/cards",
+      createMyGalleryRouter({ myGalleryController, requireAuth }),
+    )
     .use(
       "/photo-cards",
       createPhotoCardRouter({ photoCardController, requireAuth, uploadImage }),

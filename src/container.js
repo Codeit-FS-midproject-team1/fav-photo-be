@@ -21,6 +21,8 @@ import { NotificationController } from "#controllers/notification.controller.js"
 import { SaleListingRepository } from "#repositories/sale-listing.repository.js";
 import { SaleListingService } from "#services/sale-listing.service.js";
 import { SaleListingController } from "#controllers/sale-listing.controller.js";
+import { MyGalleryService } from "#services/my-gallery.service.js";
+import { MyGalleryController } from "#controllers/my-gallery.controller.js";
 
 import { ExchangeOfferRepository } from "./repositories/exchange-offer.repository.js";
 import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-listing.repository.js";
@@ -52,6 +54,9 @@ const userService = new UserService({ userRepository });
 const authService = new AuthService({ authRepository });
 // [다운] 마켓
 const saleListingService = new SaleListingService({ saleListingRepository });
+
+// [규리] 마이갤러리
+const myGalleryService = new MyGalleryService({ photoCardRepository });
 
 const imageStorage = new CloudinaryImageStorage({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
@@ -88,6 +93,7 @@ const saleListingController = new SaleListingController({ saleListingService });
 const exchangeOfferController = new ExchangeOfferController({
   exchangeOfferService,
 });
+const myGalleryController = new MyGalleryController({ myGalleryService });
 
 // ===== 5) router =====
 export const apiRouter = createApiRouter({
@@ -99,4 +105,5 @@ export const apiRouter = createApiRouter({
   notificationController,
   saleListingController,
   exchangeOfferController,
+  myGalleryController,
 });

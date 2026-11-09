@@ -11,6 +11,17 @@ export class ExchangeOfferCardRepository {
     return this.#model(tx).where({ id }).first();
   }
 
+  findHeldCardByPhotoCardId(photoCardId, ownerId, tx) {
+    return this.#model(tx)
+      .where({
+        photoCardId,
+        ownerId,
+        status: "HELD",
+      })
+      .orderBy((card) => card.id.asc())
+      .first();
+  }
+
   findOnSaleCardByListingId(listingId, ownerId, tx) {
     return this.#model(tx)
       .where({

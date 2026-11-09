@@ -8,7 +8,7 @@ export class UserController {
   };
 
   patchNickname = async (req, res) => {
-    const { nickname } = req.body;
+    const { nickname } = req.validated.body;
     const user = await this.userService.patchNickname(req.userId, nickname);
 
     res.json({
@@ -18,7 +18,7 @@ export class UserController {
   };
 
   patchPassword = async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword } = req.validated.body;
 
     await this.userService.patchPassword(
       req.userId,

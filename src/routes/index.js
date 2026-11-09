@@ -15,7 +15,7 @@ export const createApiRouter = ({
   saleListingController,
 }) =>
   Router()
-    .use("/auth", createAuthRouter({ authController }))
+    .use("/auth", createAuthRouter({ authController, requireAuth }))
     .use("/users", createUserRouter({ userController, requireAuth }))
     .use(
       "/photo-cards",

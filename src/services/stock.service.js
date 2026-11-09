@@ -49,11 +49,18 @@ export class StockService {
       throw conflict("재고 변경에 실패했습니다.");
     }
 
+    
     if (isSoldOut) {
-      // 실제 알림 메서드 이름과 인자는 알림 담당자와 확정한 뒤 연결합니다.
-      await this.notificationService.notifySoldOut(updated, tx);
+      await this.notificationService.notify(
+        {
+          userId: listing.sellerId,
+          type: "SOLD_OUT",
+          message: "판매 중인 포토카드가 품절되었습니다.",
+          link: `/marketplace/${listing.id}`,
+        },
+        tx,
+      );
     }
-
     return updated;
   }
 }

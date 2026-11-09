@@ -33,3 +33,9 @@ components:
             format: date-time,
             example: "2026-10-20T03:00:00.000Z",
           }
+    UserSummary:
+      type: object
+      required: [id, nickname]
+      properties:
+        id: { type: integer, example: 3 }
+        nickname: { type: string, example: 포토러버 }

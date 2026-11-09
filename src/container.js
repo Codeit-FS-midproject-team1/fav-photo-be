@@ -75,6 +75,7 @@ const exchangeOfferService = new ExchangeOfferService({
   cardRepository,
   tradeRepository,
   userRepository,
+  notificationService,
   db,
 });
 

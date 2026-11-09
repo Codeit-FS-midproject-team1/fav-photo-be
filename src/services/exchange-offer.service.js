@@ -157,6 +157,29 @@ export class ExchangeOfferService {
     }
 
     return this.db.transaction(async (tx) => {
+      const lockedListing =
+        await this.saleListingRepository.findByIdForNoKeyUpdate(id, tx);
+
+      if (!lockedListing || lockedListing.status === "CANCELED") {
+        throw notFound("판매글을 찾을 수 없습니다.");
+      }
+
+      if (lockedListing.status !== "ON_SALE") {
+        throw conflict("판매 중인 판매글에만 교환을 제안할 수 있습니다.");
+      }
+
+      if (lockedListing.remainingQuantity <= 0) {
+        throw conflict("교환 가능한 카드의 재고가 없습니다.");
+      }
+
+      if (lockedListing.sellerId === userId) {
+        throw badRequest("자신의 판매글에는 교환을 제안할 수 없습니다.");
+      }
+
+      if (card.photoCardId === lockedListing.photoCardId) {
+        throw conflict("동일한 원본 포토카드끼리는 교환할 수 없습니다.");
+      }
+
       const offer = await this.exchangeOfferRepository.create(
         {
           listingId: id,
@@ -305,7 +328,7 @@ export class ExchangeOfferService {
       throw notFound("교환 제안을 찾을 수 없습니다.");
     }
 
-    const listing = await this.saleListingRepository.findById(
+    const listing = await this.saleListingRepository.findByIdForNoKeyUpdate(
       offer.listingId,
       tx,
     );

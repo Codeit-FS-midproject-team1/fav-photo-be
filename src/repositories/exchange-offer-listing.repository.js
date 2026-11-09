@@ -11,6 +11,10 @@ export class ExchangeOfferListingRepository {
     return this.#model(tx).where({ id }).first();
   }
 
+  findByIdForNoKeyUpdate(id, tx) {
+    return this.#model(tx).where({ id }).forNoKeyUpdate().first();
+  }
+
   decreaseRemainingQuantity(listingId, expectedQuantity, tx) {
     if (!Number.isSafeInteger(expectedQuantity) || expectedQuantity <= 0) {
       return 0;

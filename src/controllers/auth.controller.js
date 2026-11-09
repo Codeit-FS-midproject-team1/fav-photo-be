@@ -4,13 +4,13 @@ export class AuthController {
   }
 
   signup = async (req, res) => {
-    const result = await this.authService.signup(req.body);
+    const result = await this.authService.signup(req.validated.body);
     res.status(201).json(result);
   };
 
   login = async (req, res) => {
     const { accessToken, refreshToken } = await this.authService.login(
-      req.body,
+      req.validated.body,
     );
 
     res.cookie("refreshToken", refreshToken, {

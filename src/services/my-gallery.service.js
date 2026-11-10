@@ -54,12 +54,15 @@ export class MyGalleryService {
     checkOneOf(query.method, METHODS, "올바른 제작 방식을 선택해주세요.");
     checkOneOf(query.genre, GENRES, "올바른 장르를 선택해주세요.");
     checkOneOf(query.sort, SORTS, "올바른 정렬 기준을 선택해주세요.");
+    if (query.keyword !== undefined && typeof query.keyword !== "string") {
+      throw badRequest("올바른 검색어를 입력해주세요.");
+    }
+
+    const keyword = query.keyword?.trim();
     const { page, pageSize, offset } = parsePage(query, {
       defaultSize: 10,
       maxSize: 50,
     });
-    const keyword =
-      typeof query.keyword === "string" ? query.keyword.trim() : undefined;
 
     // 2) DB 조회: method 는 빼고 가져온다 (summary 는 method 필터와 상관없이 센다)
     const rows = await this.photoCardRepository.findHeldByOwner(userId, {

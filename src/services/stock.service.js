@@ -9,7 +9,7 @@ export class StockService {
   async decrease(listingId, quantity, tx) {
     // 구매·교환 승인 전체를 하나의 트랜잭션으로 처리하기 위해 tx를 필수로 받습니다.
     if (!tx) {
-      throw new Error("StockService.decrease() requires a transaction.");
+      throw new Error("재고 차감에는 트랜잭션이 필요합니다.");
     }
 
     if (!Number.isSafeInteger(quantity) || quantity < 1) {

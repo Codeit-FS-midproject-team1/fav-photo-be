@@ -8,6 +8,8 @@ import {
 import { createPhotoCardRouter } from "./photo-card.router.js";
 import { createNotificationRouter } from "./notification.router.js";
 import { createSaleListingRouter } from "./sale-listing.router.js";
+import { createMyGalleryRouter } from "./my-gallery.router.js";
+import { createRandomPointRouter } from "./random-point.router.js";
 
 export const createApiRouter = ({
   requireAuth,
@@ -18,10 +20,16 @@ export const createApiRouter = ({
   notificationController,
   saleListingController,
   exchangeOfferController,
+  myGalleryController,
+  randomPointController,
 }) =>
   Router()
     .use("/auth", createAuthRouter({ authController, requireAuth }))
     .use("/users", createUserRouter({ userController, requireAuth }))
+    .use(
+      "/users/me/cards",
+      createMyGalleryRouter({ myGalleryController, requireAuth }),
+    )
     .use(
       "/photo-cards",
       createPhotoCardRouter({ photoCardController, requireAuth, uploadImage }),
@@ -42,6 +50,13 @@ export const createApiRouter = ({
       "/offers",
       createExchangeOfferActionRouter({
         exchangeOfferController,
+        requireAuth,
+      }),
+    )
+    .use(
+      "/random-points",
+      createRandomPointRouter({
+        randomPointController,
         requireAuth,
       }),
     );

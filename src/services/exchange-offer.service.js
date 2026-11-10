@@ -13,6 +13,7 @@ export class ExchangeOfferService {
     cardRepository,
     tradeRepository,
     userRepository,
+    notificationService,
     db,
   }) {
     this.exchangeOfferRepository = exchangeOfferRepository;
@@ -20,6 +21,7 @@ export class ExchangeOfferService {
     this.cardRepository = cardRepository;
     this.tradeRepository = tradeRepository;
     this.userRepository = userRepository;
+    this.notificationService = notificationService;
     this.db = db;
   }
 
@@ -197,6 +199,32 @@ export class ExchangeOfferService {
       if (updatedCount !== 1) {
         throw conflict("카드가 이미 다른 판매 또는 교환에 사용 중입니다.");
       }
+      // 교환 제안 도착 알림에 필요한 정보 조회
+      const offerer = await this.userRepository.findById(userId, tx);
+
+      if (!offerer) {
+        throw notFound("교환 제안자를 찾을 수 없습니다.");
+      }
+
+      const photoCard = await this.cardRepository.findPhotoCardById(
+        lockedListing.photoCardId,
+        tx,
+      );
+
+      if (!photoCard) {
+        throw notFound("판매 포토카드를 찾을 수 없습니다.");
+      }
+
+      // 판매자에게 교환 제안 도착 알림 생성
+      await this.notificationService.notify(
+        {
+          userId: lockedListing.sellerId,
+          type: "OFFER_RECEIVED",
+          message: `${offerer.nickname}님이 [${photoCard.name}] 포토카드 교환을 제안했습니다.`,
+          link: null,
+        },
+        tx,
+      );
       return offer;
     });
   }
@@ -304,6 +332,33 @@ export class ExchangeOfferService {
       if (restoredCount !== 1) {
         throw conflict("교환 제안에 사용한 카드를 복구할 수 없습니다.");
       }
+
+      // 교환 제안 거절 알림에 필요한 정보 조회
+      const seller = await this.userRepository.findById(listing.sellerId, tx);
+
+      if (!seller) {
+        throw notFound("판매자를 찾을 수 없습니다.");
+      }
+
+      const photoCard = await this.cardRepository.findPhotoCardById(
+        listing.photoCardId,
+        tx,
+      );
+
+      if (!photoCard) {
+        throw notFound("판매 포토카드를 찾을 수 없습니다.");
+      }
+
+      // 제안자에게 교환 제안 거절 알림 생성
+      await this.notificationService.notify(
+        {
+          userId: offer.offererId,
+          type: "OFFER_REJECTED",
+          message: `${seller.nickname}님이 [${photoCard.name}] 포토카드 교환 제안을 거절했습니다.`,
+          link: null,
+        },
+        tx,
+      );
 
       return this.exchangeOfferRepository.findById(id, tx);
     });
@@ -480,6 +535,33 @@ export class ExchangeOfferService {
           }
         }
       }
+
+      // 교환 제안 승인 알림에 필요한 정보 조회
+      const seller = await this.userRepository.findById(listing.sellerId, tx);
+
+      if (!seller) {
+        throw notFound("판매자를 찾을 수 없습니다.");
+      }
+
+      const photoCard = await this.cardRepository.findPhotoCardById(
+        listing.photoCardId,
+        tx,
+      );
+
+      if (!photoCard) {
+        throw notFound("판매 포토카드를 찾을 수 없습니다.");
+      }
+
+      // 제안자에게 교환 제안 승인 알림 생성
+      await this.notificationService.notify(
+        {
+          userId: offer.offererId,
+          type: "OFFER_ACCEPTED",
+          message: `${seller.nickname}님이 [${photoCard.name}] 포토카드 교환 제안을 승인했습니다.`,
+          link: null,
+        },
+        tx,
+      );
 
       return {
         id,

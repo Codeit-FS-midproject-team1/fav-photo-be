@@ -21,6 +21,8 @@ import { NotificationController } from "#controllers/notification.controller.js"
 import { SaleListingRepository } from "#repositories/sale-listing.repository.js";
 import { SaleListingService } from "#services/sale-listing.service.js";
 import { SaleListingController } from "#controllers/sale-listing.controller.js";
+import { MyGalleryService } from "#services/my-gallery.service.js";
+import { MyGalleryController } from "#controllers/my-gallery.controller.js";
 
 import { ExchangeOfferRepository } from "./repositories/exchange-offer.repository.js";
 import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-listing.repository.js";
@@ -28,6 +30,10 @@ import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.
 import { ExchangeOfferService } from "./services/exchange-offer.service.js";
 import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
 import { ExchangeOfferTradeRepository } from "./repositories/exchange-offer-trade.repository.js";
+
+import { RandomPointRepository } from "#repositories/random-point.repository.js";
+import { RandomPointService } from "#services/random-point.service.js";
+import { RandomPointController } from "#controllers/random-point.controller.js";
 
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
@@ -43,6 +49,8 @@ const exchangeOfferListingRepository = new ExchangeOfferListingRepository(db);
 const cardRepository = new ExchangeOfferCardRepository(db);
 const tradeRepository = new ExchangeOfferTradeRepository(db);
 
+const randomPointRepository = new RandomPointRepository(db);
+
 // ===== 2) 공통 service (팀 문서 4-4장) =====
 // [다운] 알림 — 가입·구매·교환 service 가 notify 로 알림을 만든다
 const notificationService = new NotificationService({
@@ -55,12 +63,17 @@ const authService = new AuthService({ authRepository, db});
 // [다운] 마켓
 const saleListingService = new SaleListingService({ saleListingRepository });
 
+// [규리] 마이갤러리
+const myGalleryService = new MyGalleryService({ photoCardRepository });
+
 const imageStorage = new CloudinaryImageStorage({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
   apiKey: process.env.CLOUDINARY_API_KEY,
   apiSecret: process.env.CLOUDINARY_API_SECRET,
 });
+
 const runInTransaction = (fn) => db.transaction(fn);
+
 const photoCardService = new PhotoCardService({
   photoCardRepository,
   cardItemRepository,
@@ -75,6 +88,12 @@ const exchangeOfferService = new ExchangeOfferService({
   cardRepository,
   tradeRepository,
   userRepository,
+  notificationService,
+  db,
+});
+
+const randomPointService = new RandomPointService({
+  randomPointRepository,
   db,
 });
 
@@ -91,6 +110,11 @@ const saleListingController = new SaleListingController({ saleListingService });
 const exchangeOfferController = new ExchangeOfferController({
   exchangeOfferService,
 });
+const myGalleryController = new MyGalleryController({ myGalleryService });
+
+const randomPointController = new RandomPointController({
+  randomPointService,
+});
 
 // ===== 5) router =====
 export const apiRouter = createApiRouter({
@@ -102,4 +126,6 @@ export const apiRouter = createApiRouter({
   notificationController,
   saleListingController,
   exchangeOfferController,
+  myGalleryController,
+  randomPointController,
 });

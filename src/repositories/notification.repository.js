@@ -32,6 +32,12 @@ export class NotificationRepository {
 
   // 구매, 교환 등 다른 기능의 트랜잭션 안에서 함께 만들 수 있게 tx를 받는다.
   create({ userId, type, message, link = null }, tx) {
-    return this.#model(tx).create({ userId, type, message, link });
+    return this.#model(tx).create({
+      userId,
+      type,
+      message,
+      link,
+      isRead: false,
+    });
   }
 }

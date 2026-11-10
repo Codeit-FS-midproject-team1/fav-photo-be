@@ -21,6 +21,7 @@ import { NotificationController } from "#controllers/notification.controller.js"
 import { SaleListingRepository } from "#repositories/sale-listing.repository.js";
 import { SaleListingService } from "#services/sale-listing.service.js";
 import { SaleListingController } from "#controllers/sale-listing.controller.js";
+import { StockService } from "#services/stock.service.js";
 
 import { ExchangeOfferRepository } from "./repositories/exchange-offer.repository.js";
 import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-listing.repository.js";
@@ -46,19 +47,28 @@ const cardRepository = new ExchangeOfferCardRepository(db);
 const notificationService = new NotificationService({
   notificationRepository,
 });
+const stockService = new StockService({
+  saleListingRepository,
+  cardItemRepository,
+  notificationService,
+});
+const runInTransaction = (fn) => db.transaction(fn);
 
 // ===== 3) 기능 service — 도메인별 블록, 자기 블록만 수정 =====
 const userService = new UserService({ userRepository });
 const authService = new AuthService({ authRepository });
 // [다운] 마켓
-const saleListingService = new SaleListingService({ saleListingRepository });
+const saleListingService = new SaleListingService({
+  saleListingRepository,
+  stockService,
+  runInTransaction,
+});
 
 const imageStorage = new CloudinaryImageStorage({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
   apiKey: process.env.CLOUDINARY_API_KEY,
   apiSecret: process.env.CLOUDINARY_API_SECRET,
 });
-const runInTransaction = (fn) => db.transaction(fn);
 const photoCardService = new PhotoCardService({
   photoCardRepository,
   cardItemRepository,

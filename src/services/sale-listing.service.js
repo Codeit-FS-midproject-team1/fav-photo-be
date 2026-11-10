@@ -1,5 +1,11 @@
 import { badRequest, notFound } from "#utils/http-error.js";
 import { parsePage } from "#utils/pagination.js";
+import {
+  SALE_PRICE_MIN,
+  SALE_PRICE_MAX,
+  EXCHANGE_DESCRIPTION_MAX,
+  POSTGRES_INT_MAX,
+} from "#utils/sale-listing.constants.js";
 
 const METHODS = ["PHOTO", "CRAFT", "AI", "ETC"];
 const GENRES = ["LANDSCAPE", "PORTRAIT", "ANIMAL", "PLANT", "OBJECT", "ETC"];
@@ -55,8 +61,10 @@ const toDetail = (listing) => ({
 });
 
 export class SaleListingService {
-  constructor({ saleListingRepository }) {
+  constructor({ saleListingRepository, stockService, runInTransaction }) {
     this.saleListingRepository = saleListingRepository;
+    this.stockService = stockService;
+    this.runInTransaction = runInTransaction;
   }
 
   // 기존 마켓 목록 조회
@@ -105,7 +113,7 @@ export class SaleListingService {
       typeof id !== "string" ||
       !/^[1-9]\d*$/.test(id) ||
       !Number.isSafeInteger(parsedId) ||
-      parsedId > 2147483647
+      parsedId > POSTGRES_INT_MAX
     ) {
       throw badRequest(undefined, {
         id: "올바른 판매글 번호가 아닙니다.",
@@ -120,5 +128,99 @@ export class SaleListingService {
     }
 
     return toDetail(listing);
+  }
+
+  // 판매글 생성과 HELD 카드 예약을 하나의 트랜잭션에서 처리합니다.
+  async create(userId, body) {
+    const {
+      photoCardId,
+      saleQuantity,
+      price,
+      exchangeMethod,
+      exchangeGenre,
+      exchangeDescription,
+    } = body ?? {};
+
+    if (
+      !Number.isSafeInteger(photoCardId) ||
+      photoCardId < 1 ||
+      photoCardId > POSTGRES_INT_MAX
+    ) {
+      throw badRequest(undefined, {
+        photoCardId: "올바른 포토카드 ID가 필요합니다.",
+      });
+    }
+
+    if (
+      !Number.isSafeInteger(saleQuantity) ||
+      saleQuantity < 1 ||
+      saleQuantity > POSTGRES_INT_MAX
+    ) {
+      throw badRequest(undefined, {
+        saleQuantity: "판매 수량은 1 이상의 정수여야 합니다.",
+      });
+    }
+
+    if (
+      !Number.isSafeInteger(price) ||
+      price < SALE_PRICE_MIN ||
+      price > SALE_PRICE_MAX
+    ) {
+      throw badRequest(undefined, {
+        price: `판매 가격은 ${SALE_PRICE_MIN}~${SALE_PRICE_MAX}P 사이여야 합니다.`,
+      });
+    }
+
+    if (!METHODS.includes(exchangeMethod)) {
+      throw badRequest(undefined, {
+        exchangeMethod: "올바른 교환 희망 제작 방식을 선택해주세요.",
+      });
+    }
+
+    if (!GENRES.includes(exchangeGenre)) {
+      throw badRequest(undefined, {
+        exchangeGenre: "올바른 교환 희망 장르를 선택해주세요.",
+      });
+    }
+
+    if (
+      typeof exchangeDescription !== "string" ||
+      exchangeDescription.length > EXCHANGE_DESCRIPTION_MAX
+    ) {
+      throw badRequest(undefined, {
+        exchangeDescription: `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
+      });
+    }
+
+    const created = await this.runInTransaction(async (tx) => {
+      const listing = await this.saleListingRepository.create(
+        {
+          sellerId: userId,
+          photoCardId,
+          saleQuantity,
+          remainingQuantity: saleQuantity,
+          price,
+          exchangeMethod,
+          exchangeGenre,
+          exchangeDescription,
+          status: "ON_SALE",
+        },
+        tx,
+      );
+
+      await this.stockService.reserveForSale(
+        {
+          sellerId: userId,
+          photoCardId,
+          quantity: saleQuantity,
+          listingId: listing.id,
+        },
+        tx,
+      );
+
+      return listing;
+    });
+
+    return this.getMarketDetail(String(created.id));
   }
 }

@@ -10,4 +10,9 @@ export class SaleListingController {
   getMarketDetail = async (req, res) => {
     res.json(await this.saleListingService.getMarketDetail(req.params.id));
   };
+
+  create = async (req, res) => {
+    const listing = await this.saleListingService.create(req.userId, req.body);
+    res.status(201).json(listing);
+  };
 }

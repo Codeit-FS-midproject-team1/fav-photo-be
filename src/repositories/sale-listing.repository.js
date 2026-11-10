@@ -74,4 +74,14 @@ export class SaleListingRepository {
 
     return count;
   }
+
+  // 판매글 상세 조회. 취소된 판매글은 마켓에서 보여주지 않는다.
+  findMarketDetailById(id, tx) {
+    return this.#model(tx)
+      .where({ id })
+      .where((listing) => listing.status.neq("CANCELED"))
+      .include("seller")
+      .include("photoCard", (card) => card.include("creator"))
+      .first();
+  }
 }

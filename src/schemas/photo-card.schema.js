@@ -1,9 +1,8 @@
 import { z } from "zod";
-
-// 상수: METHODS, GENRES 배열
-const METHODS = ["PHOTO", "CRAFT", "AI", "ETC"];
-
-const GENRES = ["LANDSCAPE", "PORTRAIT", "ANIMAL", "PLANT", "OBJECT", "ETC"];
+import {
+  PHOTO_CARD_METHODS as METHODS,
+  PHOTO_CARD_GENRES as GENRES,
+} from "#app/constants/photo-card.js";
 
 export const createPhotoCardSchema = z.object({
   name: z

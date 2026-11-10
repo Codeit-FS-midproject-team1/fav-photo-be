@@ -9,6 +9,7 @@ import {
 } from "#utils/http-error.js";
 
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+const DAILY_LIMIT = 3;
 
 class RetryableDrawConflictError extends Error {
   constructor(message) {
@@ -259,5 +260,12 @@ export class RandomPointService {
         await sleep(attempt * 20);
       }
     }
+  }
+
+  async getUsage(userId, now) {
+    const { drawDate, nextResetAt } = this.getKstDrawContext(now);
+    const log = await this.randomPointRepository.findDailyLog(userId, drawDate);
+
+    return { used: log?.usedCount ?? 0, limit: DAILY_LIMIT, nextResetAt };
   }
 }

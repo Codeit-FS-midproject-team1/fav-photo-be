@@ -1,8 +1,10 @@
 import { badRequest } from "#utils/http-error.js";
 import { parsePage } from "#utils/pagination.js";
+import {
+  PHOTO_CARD_METHODS as METHODS,
+  PHOTO_CARD_GENRES as GENRES,
+} from "#app/constants/photo-card.js";
 
-const METHODS = ["PHOTO", "CRAFT", "AI", "ETC"];
-const GENRES = ["LANDSCAPE", "PORTRAIT", "ANIMAL", "PLANT", "OBJECT", "ETC"];
 const SORTS = ["LATEST", "OLDEST", "PRICE_ASC", "PRICE_DESC"];
 
 // 값이 있는데 허용 목록에 없으면 400
@@ -72,7 +74,7 @@ export class MyGalleryService {
     const all = rows.map(toItem);
 
     // 3) 제작 방식별 종류 수
-    const methodCounts = { PHOTO: 0, CRAFT: 0, AI: 0, ETC: 0 };
+    const methodCounts = Object.fromEntries(METHODS.map((method) => [method, 0]));
     for (const item of all) methodCounts[item.photoCard.method] += 1;
 
     // 4) method 필터 → 정렬 → 페이지 자르기

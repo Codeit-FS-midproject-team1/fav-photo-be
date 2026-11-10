@@ -2,20 +2,30 @@ import { notFound, conflict, unauthorized } from "#utils/http-error.js";
 import bcrypt from "bcryptjs";
 
 export class UserService {
-  constructor({ userRepository }) {
+  constructor({ userRepository, randomPointService, photoCardService }) {
     this.userRepository = userRepository;
+    this.randomPointService = randomPointService;
+    this.photoCardService = photoCardService;
   }
 
   async getMe(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) throw notFound("사용자를 찾을 수 없습니다.");
-    // password 는 절대 응답에 넣지 않는다. randomPoint · creation 은 소철 담당에서 추가
+
+    const now = new Date();
+    const [randomPoint, creation] = await Promise.all([
+      this.randomPointService.getUsage(userId, now),
+      this.photoCardService.getUsage(userId, now),
+    ]);
+
     return {
       id: user.id,
       email: user.email,
       nickname: user.nickname,
       points: user.points,
       hasPassword: user.password !== null,
+      randomPoint,
+      creation,
     };
   }
 

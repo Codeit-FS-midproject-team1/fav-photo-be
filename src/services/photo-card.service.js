@@ -104,4 +104,16 @@ export class PhotoCardService {
       createdAt: new Date(c.createdAt).toISOString(),
     };
   }
+
+  async getUsage(userId, now) {
+    const yearMonth = kstYearMonth(now);
+    const [year, month] = yearMonth.split("-").map(Number);
+    const log = await this.creationLogRepository.findByMonth(userId, yearMonth);
+
+    return {
+      used: log?.createdCount ?? 0,
+      limit: MONTHLY_LIMIT,
+      nextResetAt: new Date(Date.UTC(year, month, 1, -9)).toISOString(),
+    };
+  }
 }

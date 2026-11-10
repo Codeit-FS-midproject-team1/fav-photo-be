@@ -1,0 +1,12 @@
+export { AuthRepository } from "./auth.repository.js";
+export { CardItemRepository } from "./card-item.repository.js";
+export { CreationLogRepository } from "./creation-log.repository.js";
+export { ExchangeOfferCardRepository } from "./exchange-offer-card.repository.js";
+export { ExchangeOfferListingRepository } from "./exchange-offer-listing.repository.js";
+export { ExchangeOfferTradeRepository } from "./exchange-offer-trade.repository.js";
+export { ExchangeOfferRepository } from "./exchange-offer.repository.js";
+export { NotificationRepository } from "./notification.repository.js";
+export { PhotoCardRepository } from "./photo-card.repository.js";
+export { RandomPointRepository } from "./random-point.repository.js";
+export { SaleListingRepository } from "./sale-listing.repository.js";
+export { UserRepository } from "./user.repository.js";

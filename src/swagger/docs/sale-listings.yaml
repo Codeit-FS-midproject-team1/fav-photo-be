@@ -146,6 +146,118 @@
                 summary: 잘못된 cursor
                 value: { message: 올바르지 않은 cursor입니다. }
 
+/sale-listings/{id}:
+  get:
+    tags: [SaleListings]
+    summary: 판매글 상세 조회
+    description: >
+      특정 판매글의 상세 정보를 조회합니다.
+      취소된 판매글은 조회할 수 없으며, 품절된 판매글은 조회할 수 있습니다.
+      판매자, 포토카드, 교환 희망 정보를 함께 반환합니다.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: 조회할 판매글 ID (sale_listings.id)
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        example: 1
+    responses:
+      200:
+        description: 판매글 상세 조회 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: integer, example: 1 }
+                status:
+                  type: string
+                  enum: [ON_SALE, SOLD_OUT]
+                  example: ON_SALE
+                price:
+                  type: integer
+                  description: 장당 판매 가격 (P)
+                  example: 100
+                saleQuantity:
+                  type: integer
+                  description: 판매 등록 장수
+                  example: 1
+                remainingQuantity:
+                  type: integer
+                  description: 남은 판매 장수
+                  example: 1
+                seller:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      nullable: true
+                      description: 탈퇴한 사용자면 null
+                      example: 1
+                    nickname:
+                      type: string
+                      description: 탈퇴한 사용자면 "탈퇴한 사용자"
+                      example: 테스트유저
+                photoCard:
+                  $ref: "#/components/schemas/PhotoCard"
+                exchangeMethod:
+                  type: string
+                  enum: [PHOTO, CRAFT, AI, ETC]
+                  example: PHOTO
+                exchangeGenre:
+                  type: string
+                  enum: [LANDSCAPE, PORTRAIT, ANIMAL, PLANT, OBJECT, ETC]
+                  example: LANDSCAPE
+                exchangeDescription:
+                  type: string
+                  example: 풍경 카드와 교환 희망
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: "2026-11-09T08:00:00.000Z"
+                updatedAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: "2026-11-09T08:00:00.000Z"
+      400:
+        description: 판매글 ID 형식 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string }
+                fields:
+                  type: object
+                  properties:
+                    id: { type: string }
+            example:
+              message: 입력값을 확인해 주세요.
+              fields:
+                id: 올바른 판매글 번호가 아닙니다.
+      401:
+        description: 로그인하지 않았거나 인증이 만료됨
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 로그인이 필요합니다. }
+      404:
+        description: 판매글이 존재하지 않거나 취소된 경우
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, example: 판매글을 찾을 수 없습니다. }
+
 /sale-listings/{id}/offers:
   get:
     tags: [Offers]

@@ -35,6 +35,10 @@ import { RandomPointRepository } from "#repositories/random-point.repository.js"
 import { RandomPointService } from "#services/random-point.service.js";
 import { RandomPointController } from "#controllers/random-point.controller.js";
 
+import { MySalesRepository } from "#repositories/my-sales.repository.js";
+import { MySalesService } from "#services/my-sales.service.js";
+import { MySalesController } from "#controllers/my-sales.controller.js";
+
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
 const authRepository = new AuthRepository(db);
@@ -43,6 +47,7 @@ const cardItemRepository = new CardItemRepository(db);
 const creationLogRepository = new CreationLogRepository(db);
 const notificationRepository = new NotificationRepository(db);
 const saleListingRepository = new SaleListingRepository(db);
+const mySalesRepository = new MySalesRepository(db);
 
 const exchangeOfferRepository = new ExchangeOfferRepository(db);
 const exchangeOfferListingRepository = new ExchangeOfferListingRepository(db);
@@ -66,6 +71,8 @@ const saleListingService = new SaleListingService({ saleListingRepository });
 
 // [규리] 마이갤러리
 const myGalleryService = new MyGalleryService({ photoCardRepository });
+// 나의 거래 포토카드
+const mySalesService = new MySalesService({ mySalesRepository });
 
 const imageStorage = new CloudinaryImageStorage({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
@@ -112,6 +119,7 @@ const exchangeOfferController = new ExchangeOfferController({
   exchangeOfferService,
 });
 const myGalleryController = new MyGalleryController({ myGalleryService });
+const mySalesController = new MySalesController({ mySalesService });
 
 const randomPointController = new RandomPointController({
   randomPointService,
@@ -128,5 +136,6 @@ export const apiRouter = createApiRouter({
   saleListingController,
   exchangeOfferController,
   myGalleryController,
+  mySalesController,
   randomPointController,
 });

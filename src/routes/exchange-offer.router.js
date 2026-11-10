@@ -12,3 +12,13 @@ export const createExchangeOfferRouter = ({
     )
     .post("/:id/offers", requireAuth, exchangeOfferController.createOffer);
 };
+
+export const createExchangeOfferActionRouter = ({
+  exchangeOfferController,
+  requireAuth,
+}) => {
+  return Router()
+    .delete("/:id", requireAuth, exchangeOfferController.cancelOffer)
+    .post("/:id/reject", requireAuth, exchangeOfferController.rejectOffer)
+    .post("/:id/accept", requireAuth, exchangeOfferController.acceptOffer);
+};

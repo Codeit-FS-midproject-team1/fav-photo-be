@@ -1,11 +1,15 @@
 import { Router } from "express";
 import { createAuthRouter } from "./auth.router.js";
 import { createUserRouter } from "./user.router.js";
-import { createExchangeOfferRouter } from "./exchange-offer.router.js";
+import {
+  createExchangeOfferRouter,
+  createExchangeOfferActionRouter,
+} from "./exchange-offer.router.js";
 import { createPhotoCardRouter } from "./photo-card.router.js";
 import { createNotificationRouter } from "./notification.router.js";
 import { createSaleListingRouter } from "./sale-listing.router.js";
 import { createMyGalleryRouter } from "./my-gallery.router.js";
+import { createRandomPointRouter } from "./random-point.router.js";
 
 export const createApiRouter = ({
   requireAuth,
@@ -17,6 +21,7 @@ export const createApiRouter = ({
   saleListingController,
   exchangeOfferController,
   myGalleryController,
+  randomPointController,
 }) =>
   Router()
     .use("/auth", createAuthRouter({ authController, requireAuth }))
@@ -40,4 +45,18 @@ export const createApiRouter = ({
     .use(
       "/sale-listings",
       createExchangeOfferRouter({ exchangeOfferController, requireAuth }),
+    )
+    .use(
+      "/offers",
+      createExchangeOfferActionRouter({
+        exchangeOfferController,
+        requireAuth,
+      }),
+    )
+    .use(
+      "/random-points",
+      createRandomPointRouter({
+        randomPointController,
+        requireAuth,
+      }),
     );

@@ -29,6 +29,11 @@ import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-li
 import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.repository.js";
 import { ExchangeOfferService } from "./services/exchange-offer.service.js";
 import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
+import { ExchangeOfferTradeRepository } from "./repositories/exchange-offer-trade.repository.js";
+
+import { RandomPointRepository } from "#repositories/random-point.repository.js";
+import { RandomPointService } from "#services/random-point.service.js";
+import { RandomPointController } from "#controllers/random-point.controller.js";
 
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
@@ -42,6 +47,9 @@ const saleListingRepository = new SaleListingRepository(db);
 const exchangeOfferRepository = new ExchangeOfferRepository(db);
 const exchangeOfferListingRepository = new ExchangeOfferListingRepository(db);
 const cardRepository = new ExchangeOfferCardRepository(db);
+const tradeRepository = new ExchangeOfferTradeRepository(db);
+
+const randomPointRepository = new RandomPointRepository(db);
 
 // ===== 2) 공통 service (팀 문서 4-4장) =====
 // [다운] 알림 — 가입·구매·교환 service 가 notify 로 알림을 만든다
@@ -52,6 +60,7 @@ const notificationService = new NotificationService({
 // ===== 3) 기능 service — 도메인별 블록, 자기 블록만 수정 =====
 const userService = new UserService({ userRepository });
 const authService = new AuthService({ authRepository });
+
 // [다운] 마켓
 const saleListingService = new SaleListingService({ saleListingRepository });
 
@@ -63,7 +72,9 @@ const imageStorage = new CloudinaryImageStorage({
   apiKey: process.env.CLOUDINARY_API_KEY,
   apiSecret: process.env.CLOUDINARY_API_SECRET,
 });
+
 const runInTransaction = (fn) => db.transaction(fn);
+
 const photoCardService = new PhotoCardService({
   photoCardRepository,
   cardItemRepository,
@@ -76,7 +87,13 @@ const exchangeOfferService = new ExchangeOfferService({
   exchangeOfferRepository,
   saleListingRepository: exchangeOfferListingRepository,
   cardRepository,
+  tradeRepository,
   userRepository,
+  db,
+});
+
+const randomPointService = new RandomPointService({
+  randomPointRepository,
   db,
 });
 
@@ -95,6 +112,10 @@ const exchangeOfferController = new ExchangeOfferController({
 });
 const myGalleryController = new MyGalleryController({ myGalleryService });
 
+const randomPointController = new RandomPointController({
+  randomPointService,
+});
+
 // ===== 5) router =====
 export const apiRouter = createApiRouter({
   requireAuth,
@@ -106,4 +127,5 @@ export const apiRouter = createApiRouter({
   saleListingController,
   exchangeOfferController,
   myGalleryController,
+  randomPointController,
 });

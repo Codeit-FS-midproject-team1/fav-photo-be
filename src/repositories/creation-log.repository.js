@@ -28,4 +28,8 @@ export class CreationLogRepository {
   setCount(id, createdCount, tx) {
     return this.#model(tx).where({ id }).update({ createdCount });
   }
+
+  findByMonth(userId, yearMonth) {
+    return this.#model().where({ userId, yearMonth }).first();
+  }
 }

@@ -34,8 +34,17 @@ export class AuthService {
     const user = await this.authRepository.findByEmail(email);
     if (!user || !user.password || user.deletedAt) throw unauthorized();
 
+    const invalidCredentialsMessage =
+      "이메일 또는 비밀번호가 올바르지 않습니다.";
+
+    if (!user || !user.password || user.deletedAt) {
+      throw unauthorized(invalidCredentialsMessage);
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw unauthorized();
+    if (!isPasswordValid) {
+      throw unauthorized(invalidCredentialsMessage);
+    }
 
     const accessToken = jwt.sign(
       { userId: user.id },

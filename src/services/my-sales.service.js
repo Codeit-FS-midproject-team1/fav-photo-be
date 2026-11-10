@@ -23,7 +23,7 @@ const toPhotoCard = (card) => ({
   id: card.id,
   name: card.name,
   description: card.description,
-  mdthod: card.method,
+  method: card.method,
   genre: card.genre,
   price: card.price,
   totalQuantity: card.totalQuantity,
@@ -35,12 +35,12 @@ const toPhotoCard = (card) => ({
 // 내가 올린 판매글 한 줄 -> items[] gks wnf
 const toSaleItem = (listing) => ({
   type: "SALE",
-  if: listing.id,
+  id: listing.id,
   saleListingId: listing.id,
   status: listing.status,
   photoCard: toPhotoCard(listing.photoCard),
   quantity: listing.remainingQuantity,
-  ptice: listing.price,
+  price: listing.price,
   createdAt: new Date(listing.createdAt).toISOString(),
 });
 

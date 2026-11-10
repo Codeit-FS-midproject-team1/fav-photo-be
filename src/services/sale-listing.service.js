@@ -1,4 +1,9 @@
-import { badRequest, notFound } from "#utils/http-error.js";
+import {
+  badRequest,
+  notFound,
+  forbidden,
+  conflict,
+} from "#utils/http-error.js";
 import { parsePage } from "#utils/pagination.js";
 import {
   SALE_PRICE_MIN,
@@ -14,6 +19,14 @@ const SOLD_OUT = ["true", "false"];
 const FILTERS = ["method", "genre", "soldOut"];
 const ONE_FILTER = "필터는 하나만 선택할 수 있습니다.";
 
+const EDIT_FIELDS = [
+  "quantity",
+  "price",
+  "exchangeMethod",
+  "exchangeGenre",
+  "exchangeDescription",
+];
+
 const checkOneOf = (value, allowed, field) => {
   if (value !== undefined && !allowed.includes(value)) {
     throw badRequest(undefined, {
@@ -22,11 +35,9 @@ const checkOneOf = (value, allowed, field) => {
   }
 };
 
-// 탈퇴한 사용자는 id 를 숨긴다
 const toUser = ({ id, nickname, deletedAt }) =>
   deletedAt ? { id: null, nickname: "탈퇴한 사용자" } : { id, nickname };
 
-// 기존 마켓 목록 응답 형식
 const toItem = (listing) => ({
   id: listing.id,
   status: listing.status,
@@ -49,7 +60,6 @@ const toItem = (listing) => ({
   createdAt: new Date(listing.createdAt).toISOString(),
 });
 
-// 상세 조회에서만 필요한 교환 희망 정보 추가
 const toDetail = (listing) => ({
   ...toItem(listing),
   exchangeMethod: listing.exchangeMethod,
@@ -60,19 +70,51 @@ const toDetail = (listing) => ({
     : null,
 });
 
+const parseListingId = (rawId) => {
+  const id = Number(rawId);
+
+  if (
+    typeof rawId !== "string" ||
+    !/^[1-9]\d*$/.test(rawId) ||
+    !Number.isSafeInteger(id) ||
+    id > POSTGRES_INT_MAX
+  ) {
+    throw badRequest(undefined, {
+      id: "올바른 판매글 번호가 아닙니다.",
+    });
+  }
+
+  return id;
+};
+
 export class SaleListingService {
-  constructor({ saleListingRepository, stockService, runInTransaction }) {
+  constructor({
+    saleListingRepository,
+    stockService,
+    runInTransaction,
+    cardItemRepository,
+    exchangeOfferRepository,
+    exchangeOfferCardRepository,
+    notificationService,
+  }) {
     this.saleListingRepository = saleListingRepository;
     this.stockService = stockService;
     this.runInTransaction = runInTransaction;
+    this.cardItemRepository = cardItemRepository;
+    this.exchangeOfferRepository = exchangeOfferRepository;
+    this.exchangeOfferCardRepository = exchangeOfferCardRepository;
+    this.notificationService = notificationService;
   }
 
-  // 기존 마켓 목록 조회
+  // 판매글 목록 조회
   async getMarketList(query) {
     const used = FILTERS.filter((key) => query[key] !== undefined);
 
-    if (used.length > 1)
-      throw badRequest(ONE_FILTER, { [used[1]]: ONE_FILTER });
+    if (used.length > 1) {
+      throw badRequest(ONE_FILTER, {
+        [used[1]]: ONE_FILTER,
+      });
+    }
 
     checkOneOf(query.method, METHODS, "method");
     checkOneOf(query.genre, GENRES, "genre");
@@ -101,27 +143,17 @@ export class SaleListingService {
       this.saleListingRepository.countMarketList(filters),
     ]);
 
-    return { items: rows.map(toItem), totalCount };
+    return {
+      items: rows.map(toItem),
+      totalCount,
+    };
   }
 
   // 판매글 상세 조회
-  async getMarketDetail(id) {
-    // 판매글 ID는 PostgreSQL int4 범위의 양의 정수만 허용한다.
-    const parsedId = Number(id);
+  async getMarketDetail(rawId) {
+    const id = parseListingId(rawId);
 
-    if (
-      typeof id !== "string" ||
-      !/^[1-9]\d*$/.test(id) ||
-      !Number.isSafeInteger(parsedId) ||
-      parsedId > POSTGRES_INT_MAX
-    ) {
-      throw badRequest(undefined, {
-        id: "올바른 판매글 번호가 아닙니다.",
-      });
-    }
-
-    const listing =
-      await this.saleListingRepository.findMarketDetailById(parsedId);
+    const listing = await this.saleListingRepository.findMarketDetailById(id);
 
     if (!listing) {
       throw notFound("판매글을 찾을 수 없습니다.");
@@ -130,7 +162,7 @@ export class SaleListingService {
     return toDetail(listing);
   }
 
-  // 판매글 생성과 HELD 카드 예약을 하나의 트랜잭션에서 처리합니다.
+  // 판매 등록
   async create(userId, body) {
     const {
       photoCardId,
@@ -222,5 +254,264 @@ export class SaleListingService {
     });
 
     return this.getMarketDetail(String(created.id));
+  }
+
+  // 판매 정보 수정
+  async update(userId, rawId, body) {
+    const id = parseListingId(rawId);
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      throw badRequest("수정할 정보를 입력해 주세요.");
+    }
+
+    const keys = Object.keys(body);
+
+    if (keys.length === 0) {
+      throw badRequest("수정할 정보를 입력해 주세요.");
+    }
+
+    const unknownField = keys.find((key) => !EDIT_FIELDS.includes(key));
+
+    if (unknownField) {
+      throw badRequest(undefined, {
+        [unknownField]: "수정할 수 없는 항목입니다.",
+      });
+    }
+
+    // quantity는 수정 후 남은 판매 수량이다.
+    if (Object.hasOwn(body, "quantity")) {
+      if (
+        !Number.isSafeInteger(body.quantity) ||
+        body.quantity < 1 ||
+        body.quantity > POSTGRES_INT_MAX
+      ) {
+        throw badRequest(undefined, {
+          quantity: "남은 판매 수량은 1 이상의 정수여야 합니다.",
+        });
+      }
+    }
+
+    if (Object.hasOwn(body, "price")) {
+      if (
+        !Number.isSafeInteger(body.price) ||
+        body.price < SALE_PRICE_MIN ||
+        body.price > SALE_PRICE_MAX
+      ) {
+        throw badRequest(undefined, {
+          price: `판매 가격은 ${SALE_PRICE_MIN}~${SALE_PRICE_MAX}P 사이여야 합니다.`,
+        });
+      }
+    }
+
+    if (
+      Object.hasOwn(body, "exchangeMethod") &&
+      !METHODS.includes(body.exchangeMethod)
+    ) {
+      throw badRequest(undefined, {
+        exchangeMethod: "올바른 교환 희망 제작 방식을 선택해주세요.",
+      });
+    }
+
+    if (
+      Object.hasOwn(body, "exchangeGenre") &&
+      !GENRES.includes(body.exchangeGenre)
+    ) {
+      throw badRequest(undefined, {
+        exchangeGenre: "올바른 교환 희망 장르를 선택해주세요.",
+      });
+    }
+
+    if (Object.hasOwn(body, "exchangeDescription")) {
+      if (
+        typeof body.exchangeDescription !== "string" ||
+        body.exchangeDescription.length > EXCHANGE_DESCRIPTION_MAX
+      ) {
+        throw badRequest(undefined, {
+          exchangeDescription: `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
+        });
+      }
+    }
+
+    await this.runInTransaction(async (tx) => {
+      // 판매글을 잠가 동시에 수량이 수정되지 않게 한다.
+      const listing = await this.saleListingRepository.findByIdForUpdate(
+        id,
+        tx,
+      );
+
+      if (!listing) {
+        throw notFound("판매글을 찾을 수 없습니다.");
+      }
+
+      if (listing.sellerId !== userId) {
+        throw forbidden("본인의 판매글만 수정할 수 있습니다.");
+      }
+
+      if (listing.status !== "ON_SALE") {
+        throw conflict("판매 중인 판매글만 수정할 수 있습니다.");
+      }
+
+      const changes = {};
+
+      // 가격 및 교환 희망 정보 변경
+      const simpleFields = [
+        "price",
+        "exchangeMethod",
+        "exchangeGenre",
+        "exchangeDescription",
+      ];
+
+      for (const field of simpleFields) {
+        if (Object.hasOwn(body, field) && body[field] !== listing[field]) {
+          changes[field] = body[field];
+        }
+      }
+
+      // 판매 수량 변경
+      if (
+        Object.hasOwn(body, "quantity") &&
+        body.quantity !== listing.remainingQuantity
+      ) {
+        const difference = body.quantity - listing.remainingQuantity;
+
+        const nextSaleQuantity = listing.saleQuantity + difference;
+
+        if (
+          !Number.isSafeInteger(nextSaleQuantity) ||
+          nextSaleQuantity < 1 ||
+          nextSaleQuantity > POSTGRES_INT_MAX
+        ) {
+          throw conflict("변경할 수 있는 판매 수량 범위를 초과했습니다.");
+        }
+
+        if (difference > 0) {
+          // 수량 증가: HELD 카드를 추가로 ON_SALE 처리
+          await this.stockService.reserveForSale(
+            {
+              sellerId: listing.sellerId,
+              photoCardId: listing.photoCardId,
+              quantity: difference,
+              listingId: id,
+            },
+            tx,
+          );
+        } else {
+          // 수량 감소: 초과된 판매 카드를 HELD로 복구
+          const releasedCount =
+            await this.cardItemRepository.releaseFromSaleListing(
+              id,
+              listing.sellerId,
+              Math.abs(difference),
+              tx,
+            );
+
+          if (releasedCount !== Math.abs(difference)) {
+            throw conflict("판매 카드 수량이 일치하지 않습니다.");
+          }
+        }
+
+        changes.saleQuantity = nextSaleQuantity;
+        changes.remainingQuantity = body.quantity;
+      }
+
+      // 실제 변경이 없다면 저장하거나 알리지 않는다.
+      if (Object.keys(changes).length === 0) {
+        return;
+      }
+
+      await this.saleListingRepository.updateById(id, changes, tx);
+
+      // 현재 대기 중인 교환 제안자에게 수정 알림
+      const offers = await this.exchangeOfferRepository.findByListingId(id, {
+        tx,
+      });
+
+      const offererIds = new Set(offers.map((offer) => offer.offererId));
+
+      for (const offererId of offererIds) {
+        await this.notificationService.notify(
+          {
+            userId: offererId,
+            type: "LISTING_UPDATED",
+            message: "교환을 제안한 판매글의 정보가 수정되었습니다.",
+            // FE 상세 경로가 확정되면 실제 경로로 변경
+            link: "/",
+          },
+          tx,
+        );
+      }
+    });
+
+    return this.getMarketDetail(String(id));
+  }
+
+  // 판매 취소
+  async cancel(userId, rawId) {
+    const id = parseListingId(rawId);
+
+    await this.runInTransaction(async (tx) => {
+      const listing = await this.saleListingRepository.findByIdForUpdate(
+        id,
+        tx,
+      );
+
+      if (!listing) {
+        throw notFound("판매글을 찾을 수 없습니다.");
+      }
+
+      if (listing.sellerId !== userId) {
+        throw forbidden("본인의 판매글만 취소할 수 있습니다.");
+      }
+
+      if (listing.status !== "ON_SALE") {
+        throw conflict("판매 중인 판매글만 취소할 수 있습니다.");
+      }
+
+      const offers = await this.exchangeOfferRepository.findByListingId(id, {
+        tx,
+      });
+
+      for (const offer of offers) {
+        const updatedCount =
+          await this.exchangeOfferRepository.updateStatusIfPending(
+            offer.id,
+            "REJECTED",
+            tx,
+          );
+
+        if (updatedCount !== 1) {
+          throw conflict("교환 제안 상태가 변경되었습니다.");
+        }
+
+        const restoredCount =
+          await this.exchangeOfferCardRepository.restoreFromOffer(
+            offer.offeredCardItemId,
+            offer.offererId,
+            offer.id,
+            tx,
+          );
+
+        if (restoredCount !== 1) {
+          throw conflict("교환 제시 카드를 복구할 수 없습니다.");
+        }
+      }
+
+      const restoredSaleCount =
+        await this.cardItemRepository.restoreFromSaleListing(
+          id,
+          listing.sellerId,
+          tx,
+        );
+
+      if (restoredSaleCount !== listing.remainingQuantity) {
+        throw conflict("판매 카드 수량이 일치하지 않습니다.");
+      }
+
+      await this.saleListingRepository.updateById(
+        id,
+        { status: "CANCELED" },
+        tx,
+      );
+    });
   }
 }

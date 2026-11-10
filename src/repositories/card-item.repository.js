@@ -7,14 +7,14 @@ export class CardItemRepository {
     return (tx ?? this.db).orm.public.CardItem;
   }
 
-  // 기존 카드 생성 기능
+  // 포토카드 생성 시 실제 소유 카드 생성
   async createMany(items, tx) {
     for (const item of items) {
       await this.#model(tx).create(item);
     }
   }
 
-  // 판매 가능한 HELD 카드를 트랜잭션 안에서 잠급니다.
+  // 판매 가능한 HELD 카드 조회 및 잠금
   findHeldForSale(ownerId, photoCardId, quantity, tx) {
     if (!tx) {
       throw new Error("보유 카드 조회에는 트랜잭션이 필요합니다.");
@@ -32,7 +32,7 @@ export class CardItemRepository {
       .all();
   }
 
-  // 예약한 카드들을 판매 상태로 변경하고 정확한 갱신 건수를 확인합니다.
+  // 판매 등록: HELD → ON_SALE
   async markOnSale(items, listingId, tx) {
     if (!tx) {
       throw new Error("카드 상태 변경에는 트랜잭션이 필요합니다.");
@@ -60,5 +60,71 @@ export class CardItemRepository {
     }
 
     return updatedCount;
+  }
+
+  // 판매 취소: 해당 판매글의 남은 카드 전체 복구
+  // ON_SALE → HELD
+  restoreFromSaleListing(listingId, sellerId, tx) {
+    if (!tx) {
+      throw new Error("판매 카드 복구에는 트랜잭션이 필요합니다.");
+    }
+
+    return this.#model(tx)
+      .where({
+        listingId,
+        ownerId: sellerId,
+        status: "ON_SALE",
+      })
+      .updateAndCount({
+        status: "HELD",
+        listingId: null,
+      });
+  }
+
+  // 판매 수정: 지정한 수량만큼 카드 복구
+  // ON_SALE → HELD
+  async releaseFromSaleListing(listingId, sellerId, quantity, tx) {
+    if (!tx) {
+      throw new Error("판매 카드 수량 변경에는 트랜잭션이 필요합니다.");
+    }
+
+    const items = await this.#model(tx)
+      .where({
+        listingId,
+        ownerId: sellerId,
+        status: "ON_SALE",
+      })
+      .orderBy([(item) => item.id.desc()])
+      .limit(quantity)
+      .forUpdate()
+      .all();
+
+    if (items.length !== quantity) {
+      return items.length;
+    }
+
+    let restoredCount = 0;
+
+    for (const item of items) {
+      const count = await this.#model(tx)
+        .where({
+          id: item.id,
+          listingId,
+          ownerId: sellerId,
+          status: "ON_SALE",
+        })
+        .updateAndCount({
+          status: "HELD",
+          listingId: null,
+        });
+
+      if (count !== 1) {
+        throw new Error("판매 카드 복구에 실패했습니다.");
+      }
+
+      restoredCount += count;
+    }
+
+    return restoredCount;
   }
 }

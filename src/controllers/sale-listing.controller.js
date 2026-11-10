@@ -13,6 +13,23 @@ export class SaleListingController {
 
   create = async (req, res) => {
     const listing = await this.saleListingService.create(req.userId, req.body);
+
     res.status(201).json(listing);
+  };
+
+  update = async (req, res) => {
+    const listing = await this.saleListingService.update(
+      req.userId,
+      req.params.id,
+      req.body,
+    );
+
+    res.status(200).json(listing);
+  };
+
+  cancel = async (req, res) => {
+    await this.saleListingService.cancel(req.userId, req.params.id);
+
+    res.status(204).send();
   };
 }

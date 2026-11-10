@@ -1,8 +1,10 @@
 import { badRequest, notFound } from "#utils/http-error.js";
 import { parsePage } from "#utils/pagination.js";
+import {
+  PHOTO_CARD_METHODS as METHODS,
+  PHOTO_CARD_GENRES as GENRES,
+} from "#app/constants/photo-card.js";
 
-const METHODS = ["PHOTO", "CRAFT", "AI", "ETC"];
-const GENRES = ["LANDSCAPE", "PORTRAIT", "ANIMAL", "PLANT", "OBJECT", "ETC"];
 const SORTS = ["latest", "oldest", "priceLow", "priceHigh"];
 const SOLD_OUT = ["true", "false"];
 const FILTERS = ["method", "genre", "soldOut"];

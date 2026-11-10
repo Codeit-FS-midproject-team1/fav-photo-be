@@ -1,39 +1,43 @@
 import { db } from "#prisma/db.js";
-import { UserRepository } from "#repositories/user.repository.js";
-import { UserService } from "#services/user.service.js";
-import { UserController } from "#controllers/user.controller.js";
+import {
+  AuthRepository,
+  CardItemRepository,
+  CreationLogRepository,
+  ExchangeOfferCardRepository,
+  ExchangeOfferListingRepository,
+  ExchangeOfferTradeRepository,
+  ExchangeOfferRepository,
+  NotificationRepository,
+  PhotoCardRepository,
+  RandomPointRepository,
+  SaleListingRepository,
+  UserRepository,
+} from "#repositories/index.js";
+import {
+  AuthService,
+  ExchangeOfferService,
+  MyGalleryService,
+  NotificationService,
+  PhotoCardService,
+  RandomPointService,
+  SaleListingService,
+  UserService,
+} from "#services/index.js";
+import {
+  AuthController,
+  ExchangeOfferController,
+  MyGalleryController,
+  NotificationController,
+  PhotoCardController,
+  RandomPointController,
+  SaleListingController,
+  UserController,
+} from "#controllers/index.js";
+
 import { createRequireAuth } from "#middlewares/auth.middleware.js";
 import { createApiRouter } from "#routes/index.js";
-
-import { AuthRepository } from "./repositories/auth.repository.js";
-import { AuthService } from "./services/auth.service.js";
-import { AuthController } from "./controllers/auth.controller.js";
-import { PhotoCardRepository } from "#repositories/photo-card.repository.js";
-import { CardItemRepository } from "#repositories/card-item.repository.js";
-import { CreationLogRepository } from "#repositories/creation-log.repository.js";
 import { CloudinaryImageStorage } from "#utils/cloudinary.js";
-import { PhotoCardService } from "#services/photo-card.service.js";
-import { PhotoCardController } from "#controllers/photo-card.controller.js";
 import { uploadImage } from "#middlewares/upload.middleware.js";
-import { NotificationRepository } from "#repositories/notification.repository.js";
-import { NotificationService } from "#services/notification.service.js";
-import { NotificationController } from "#controllers/notification.controller.js";
-import { SaleListingRepository } from "#repositories/sale-listing.repository.js";
-import { SaleListingService } from "#services/sale-listing.service.js";
-import { SaleListingController } from "#controllers/sale-listing.controller.js";
-import { MyGalleryService } from "#services/my-gallery.service.js";
-import { MyGalleryController } from "#controllers/my-gallery.controller.js";
-
-import { ExchangeOfferRepository } from "./repositories/exchange-offer.repository.js";
-import { ExchangeOfferListingRepository } from "./repositories/exchange-offer-listing.repository.js";
-import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.repository.js";
-import { ExchangeOfferService } from "./services/exchange-offer.service.js";
-import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
-import { ExchangeOfferTradeRepository } from "./repositories/exchange-offer-trade.repository.js";
-
-import { RandomPointRepository } from "#repositories/random-point.repository.js";
-import { RandomPointService } from "#services/random-point.service.js";
-import { RandomPointController } from "#controllers/random-point.controller.js";
 
 // ===== 1) repositories =====
 const userRepository = new UserRepository(db);
@@ -58,7 +62,6 @@ const notificationService = new NotificationService({
 });
 
 // ===== 3) 기능 service — 도메인별 블록, 자기 블록만 수정 =====
-const userService = new UserService({ userRepository });
 const authService = new AuthService({ authRepository });
 
 // [다운] 마켓
@@ -96,6 +99,12 @@ const exchangeOfferService = new ExchangeOfferService({
 const randomPointService = new RandomPointService({
   randomPointRepository,
   db,
+});
+
+const userService = new UserService({
+  userRepository,
+  randomPointService,
+  photoCardService,
 });
 
 // ===== 4) middlewares · controllers =====

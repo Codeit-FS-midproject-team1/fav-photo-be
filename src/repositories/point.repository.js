@@ -13,7 +13,7 @@ export class PointRepository {
       throw new Error("포인트 조회에는 트랜잭션이 필요합니다.");
     }
 
-    return this.#model(tx).where({ id: userId }).forUpdate().first();
+    return this.#model(tx).where({ id: userId }).forNoKeyUpdate().first();
   }
 
   // 잠근 사용자의 포인트를 변경합니다.

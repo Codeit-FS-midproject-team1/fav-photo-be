@@ -103,14 +103,21 @@ export class MySalesService {
         (!query.status || item.status === query.status),
     );
 
-    // 4) 제작 방식별 종류 수
+    // 4) 제작 방식별 종류 수: 검색, 필터와 상관없이 전체로 센다.
     const methodCounts = { PHOTO: 0, CRAFT: 0, AI: 0, ETC: 0 };
-    for (const item of base) methodCounts[item.photoCard.method] += 1;
+    for (const item of all) methodCounts[item.photoCard.method] += 1;
 
-    // 5) method 필터 → 정렬 → 페이지 자르기
-    const filtered = query.method
-      ? base.filter((item) => item.photoCard.method === query.method)
-      : base;
+    // 5) 검색어, 장르, 상태, 제작방식 필터 → 정렬 → 페이지 자르기
+    // const filtered = query.method
+    //   ? base.filter((item) => item.photoCard.method === query.method)
+    //   : base;
+    const filtered = all.filter(
+      (item) =>
+        (!keyword || item.photoCard.name.toLowerCase().includes(keyword)) &&
+        (!query.genre || item.photoCard.genre === query.genre) &&
+        (!query.status || item.status === query.status) &&
+        (!query.method || item.photoCard.method === query.method),
+    );
     filtered.sort(COMPARE[query.sort ?? "LATEST"]);
 
     const totalItems = filtered.length;

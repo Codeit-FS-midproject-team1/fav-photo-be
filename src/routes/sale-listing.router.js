@@ -6,4 +6,7 @@ export const createSaleListingRouter = ({
 }) =>
   Router()
     .get("/", requireAuth, saleListingController.getMarketList)
-    .get("/:id", requireAuth, saleListingController.getMarketDetail);
+    .post("/", requireAuth, saleListingController.create)
+    .get("/:id", requireAuth, saleListingController.getMarketDetail)
+    .patch("/:id", requireAuth, saleListingController.update)
+    .delete("/:id", requireAuth, saleListingController.cancel);

@@ -1,21 +1,85 @@
+
 import { badRequest, conflict, notFound } from "#utils/http-error.js";
 
+const MAX_DB_INT = 2147483647;
+
 export class StockService {
-  constructor({ saleListingRepository, notificationService }) {
+  constructor({
+    saleListingRepository,
+    cardItemRepository,
+    notificationService,
+    pendingOfferCleanupRepository,
+  }) {
     this.saleListingRepository = saleListingRepository;
+    this.cardItemRepository = cardItemRepository;
     this.notificationService = notificationService;
+    this.pendingOfferCleanupRepository = pendingOfferCleanupRepository;
   }
 
-  async decrease(listingId, quantity, tx) {
-    // 구매·교환 승인 전체를 하나의 트랜잭션으로 처리하기 위해 tx를 필수로 받습니다.
+  // ========================================
+  // 판매 등록 시 보유 카드 예약
+  // ========================================
+
+  async reserveForSale(
+    { sellerId, photoCardId, quantity, listingId },
+    tx,
+  ) {
     if (!tx) {
-      throw new Error("StockService.decrease() requires a transaction.");
+      throw new Error("판매 재고 예약에는 트랜잭션이 필요합니다.");
     }
 
-    if (!Number.isSafeInteger(quantity) || quantity < 1) {
-      throw badRequest("수량은 1 이상의 정수여야 합니다.");
+    const items = await this.cardItemRepository.findHeldForSale(
+      sellerId,
+      photoCardId,
+      quantity,
+      tx,
+    );
+
+    if (items.length !== quantity) {
+      throw conflict("판매 가능한 보유 카드 수량이 부족합니다.");
     }
 
+    const updatedCount = await this.cardItemRepository.markOnSale(
+      items,
+      listingId,
+      tx,
+    );
+
+    if (updatedCount !== quantity) {
+      throw conflict("판매할 카드의 상태 변경에 실패했습니다.");
+    }
+
+    return updatedCount;
+  }
+
+  // ========================================
+  // 구매 및 교환 승인 시 재고 차감
+  // ========================================
+
+  async decrease(listingId, quantity, tx) {
+    if (!tx) {
+      throw new Error("재고 차감에는 트랜잭션이 필요합니다.");
+    }
+
+    // 1. 판매글 ID 검증
+    if (
+      !Number.isSafeInteger(listingId) ||
+      listingId < 1 ||
+      listingId > MAX_DB_INT
+    ) {
+      throw badRequest("올바른 판매글 ID가 필요합니다.");
+    }
+
+    // 2. 구매 수량 검증
+    if (
+      !Number.isSafeInteger(quantity) ||
+      quantity < 1 ||
+      quantity > MAX_DB_INT
+    ) {
+      throw badRequest("수량은 1 이상의 올바른 정수여야 합니다.");
+    }
+
+    // 3. 판매글 조회 및 행 잠금
     const listing = await this.saleListingRepository.findByIdForUpdate(
       listingId,
       tx,
@@ -29,10 +93,12 @@ export class StockService {
       throw conflict("현재 판매 중인 포토카드가 아닙니다.");
     }
 
+    // 4. 남은 수량 확인
     if (listing.remainingQuantity < quantity) {
       throw conflict("남은 판매 수량이 부족합니다.");
     }
 
+    // 5. 재고 차감
     const remainingQuantity = listing.remainingQuantity - quantity;
     const isSoldOut = remainingQuantity === 0;
 
@@ -49,8 +115,32 @@ export class StockService {
       throw conflict("재고 변경에 실패했습니다.");
     }
 
-    
+    // ========================================
+    // 6. 품절 시 후속 처리
+    // ========================================
+
     if (isSoldOut) {
+      // 6-1. 대기 중 교환 제안 자동 거절 및 카드 복구
+      const rejectedOffers =
+        await this.pendingOfferCleanupRepository.rejectAllPendingByListing(
+          listingId,
+          tx,
+        );
+
+      // 6-2. 교환 제안자에게 거절 알림
+      for (const offer of rejectedOffers) {
+        await this.notificationService.notify(
+          {
+            userId: offer.offererId,
+            type: "OFFER_REJECTED",
+            message: "판매글이 품절되어 교환 제안이 거절되었습니다.",
+            link: `/marketplace/${listing.id}`,
+          },
+          tx,
+        );
+      }
+
+      // 6-3. 판매자에게 품절 알림
       await this.notificationService.notify(
         {
           userId: listing.sellerId,
@@ -61,6 +151,7 @@ export class StockService {
         tx,
       );
     }
+
     return updated;
   }
 }

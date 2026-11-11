@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8a2ab38a637166638063042d33f132e6ee9f780d2aae7aabc2d264ec84f4b44b'>;
+  StorageHashBase<'08ef3e43d3b41a73a84914dbe16dee56c8a53e5e141fa63057aaf331fa9a19ac'>;
 export type ExecutionHash =
   ExecutionHashBase<'9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5'>;
 export type ProfileHash =
@@ -296,6 +296,14 @@ export type FieldOutputTypes = {
       readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
       readonly userId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly PurchaseRequest: {
+      readonly buyerId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly idempotencyKey: CodecTypes['pg/text@1']['output'];
+      readonly requestHash: CodecTypes['pg/text@1']['output'];
+      readonly responseJson: CodecTypes['pg/text@1']['output'] | null;
+    };
     readonly RandomPointLog: {
       readonly drawDate: CodecTypes['pg/date-string@1']['output'];
       readonly earnedPoints: CodecTypes['pg/int4@1']['output'];
@@ -410,6 +418,14 @@ export type FieldInputTypes = {
       readonly idempotencyKey: CodecTypes['pg/text@1']['input'] | null;
       readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
       readonly userId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly PurchaseRequest: {
+      readonly buyerId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly idempotencyKey: CodecTypes['pg/text@1']['input'];
+      readonly requestHash: CodecTypes['pg/text@1']['input'];
+      readonly responseJson: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly RandomPointLog: {
       readonly drawDate: CodecTypes['pg/date-string@1']['input'];
@@ -526,6 +542,14 @@ export type StorageColumnTypes = {
       readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
       readonly user_id: CodecTypes['pg/int4@1']['output'];
     };
+    readonly purchase_requests: {
+      readonly buyer_id: CodecTypes['pg/int4@1']['output'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly idempotency_key: CodecTypes['pg/text@1']['output'];
+      readonly request_hash: CodecTypes['pg/text@1']['output'];
+      readonly response_json: CodecTypes['pg/text@1']['output'] | null;
+    };
     readonly random_point_logs: {
       readonly draw_date: CodecTypes['pg/date-string@1']['output'];
       readonly earned_points: CodecTypes['pg/int4@1']['output'];
@@ -640,6 +664,14 @@ export type StorageColumnInputTypes = {
       readonly idempotency_key: CodecTypes['pg/text@1']['input'] | null;
       readonly reason: 'SIGNUP' | 'PURCHASE' | 'SALE' | 'RANDOM';
       readonly user_id: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly purchase_requests: {
+      readonly buyer_id: CodecTypes['pg/int4@1']['input'];
+      readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly idempotency_key: CodecTypes['pg/text@1']['input'];
+      readonly request_hash: CodecTypes['pg/text@1']['input'];
+      readonly response_json: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly random_point_logs: {
       readonly draw_date: CodecTypes['pg/date-string@1']['input'];
@@ -780,6 +812,16 @@ export namespace Models {
     user: public_User;
     readonly [RelationKeys]?: 'user';
   };
+  export type public_PurchaseRequest = {
+    buyerId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    idempotencyKey: CodecTypes['pg/text@1']['output'];
+    requestHash: CodecTypes['pg/text@1']['output'];
+    responseJson: CodecTypes['pg/text@1']['output'] | null;
+    buyer: public_User;
+    readonly [RelationKeys]?: 'buyer';
+  };
   export type public_RandomPointLog = {
     drawDate: CodecTypes['pg/date-string@1']['output'];
     earnedPoints: CodecTypes['pg/int4@1']['output'];
@@ -849,6 +891,7 @@ export namespace Models {
     notifications: public_Notification[];
     ownedCardItems: public_CardItem[];
     pointHistories: public_PointHistory[];
+    purchaseRequests: public_PurchaseRequest[];
     randomPointLogs: public_RandomPointLog[];
     refreshTokens: public_RefreshToken[];
     saleListings: public_SaleListing[];
@@ -861,6 +904,7 @@ export namespace Models {
       | 'notifications'
       | 'ownedCardItems'
       | 'pointHistories'
+      | 'purchaseRequests'
       | 'randomPointLogs'
       | 'refreshTokens'
       | 'saleListings'
@@ -876,6 +920,7 @@ export declare const models: {
     Notification: Models.public_Notification;
     PhotoCard: Models.public_PhotoCard;
     PointHistory: Models.public_PointHistory;
+    PurchaseRequest: Models.public_PurchaseRequest;
     RandomPointLog: Models.public_RandomPointLog;
     RefreshToken: Models.public_RefreshToken;
     SaleListing: Models.public_SaleListing;
@@ -1480,6 +1525,75 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly purchase_requests: {
+              columns: {
+                readonly buyer_id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly idempotency_key: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly request_hash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly response_json: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['buyer_id', 'idempotency_key'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'purchase_requests_buyer_id_idx_a09525cc';
+                  readonly prefix: 'purchase_requests_buyer_id_idx';
+                  readonly columns: readonly ['buyer_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'purchase_requests';
+                    readonly columns: readonly ['buyer_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly random_point_logs: {
               columns: {
                 readonly draw_date: {
@@ -2044,6 +2158,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'PointHistory';
     };
+    readonly purchase_requests: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PurchaseRequest';
+    };
     readonly random_point_logs: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'RandomPointLog';
@@ -2540,6 +2658,60 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly PurchaseRequest: {
+            readonly fields: {
+              readonly buyerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly idempotencyKey: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly requestHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly responseJson: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly buyer: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['buyerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'purchase_requests';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly buyerId: { readonly column: 'buyer_id' };
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly id: { readonly column: 'id' };
+                readonly idempotencyKey: { readonly column: 'idempotency_key' };
+                readonly requestHash: { readonly column: 'request_hash' };
+                readonly responseJson: { readonly column: 'response_json' };
+              };
+            };
+          };
           readonly RandomPointLog: {
             readonly fields: {
               readonly drawDate: {
@@ -2978,6 +3150,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly purchaseRequests: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PurchaseRequest';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['buyerId'];
                 };
               };
               readonly randomPointLogs: {

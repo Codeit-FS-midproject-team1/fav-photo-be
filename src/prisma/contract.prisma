@@ -10,6 +10,7 @@ model User {
   createdAt TimestamptzString  @default(now()) @map("created_at")
   deletedAt TimestamptzString? @map("deleted_at")
 
+  purchaseRequests PurchaseRequest[]
   refreshTokens RefreshToken[]
   createdPhotoCards PhotoCard[]
   ownedCardItems CardItem[]
@@ -320,4 +321,19 @@ model CreationLog {
 
   @@unique([userId, yearMonth])
   @@map("creation_logs")
+}
+
+
+model PurchaseRequest {
+  id             Int               @id @default(autoincrement())
+  buyerId        Int               @map("buyer_id")
+  idempotencyKey String            @map("idempotency_key")
+  requestHash    String            @map("request_hash")
+  responseJson   String?           @map("response_json")
+  createdAt      TimestamptzString @default(now()) @map("created_at")
+
+  buyer User @relation(fields: [buyerId], references: [id])
+
+  @@unique([buyerId, idempotencyKey])
+  @@map("purchase_requests")
 }

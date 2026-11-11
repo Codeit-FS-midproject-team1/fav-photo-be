@@ -28,6 +28,10 @@
       "model": "PointHistory",
       "namespace": "public"
     },
+    "purchase_requests": {
+      "model": "PurchaseRequest",
+      "namespace": "public"
+    },
     "random_point_logs": {
       "model": "RandomPointLog",
       "namespace": "public"
@@ -1025,6 +1029,94 @@
               "table": "point_histories"
             }
           },
+          "PurchaseRequest": {
+            "fields": {
+              "buyerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "idempotencyKey": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "requestHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "responseJson": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "buyer": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "buyerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "buyerId": {
+                  "column": "buyer_id"
+                },
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "idempotencyKey": {
+                  "column": "idempotency_key"
+                },
+                "requestHash": {
+                  "column": "request_hash"
+                },
+                "responseJson": {
+                  "column": "response_json"
+                }
+              },
+              "namespaceId": "public",
+              "table": "purchase_requests"
+            }
+          },
           "RandomPointLog": {
             "fields": {
               "drawDate": {
@@ -1727,6 +1819,21 @@
                 },
                 "to": {
                   "model": "PointHistory",
+                  "namespace": "public"
+                }
+              },
+              "purchaseRequests": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "buyerId"
+                  ]
+                },
+                "to": {
+                  "model": "PurchaseRequest",
                   "namespace": "public"
                 }
               },
@@ -2621,6 +2728,92 @@
                 }
               ]
             },
+            "purchase_requests": {
+              "columns": {
+                "buyer_id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "idempotency_key": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "request_hash": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "response_json": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "purchase_requests_buyer_id_idx_a09525cc"
+                  },
+                  "source": {
+                    "columns": [
+                      "buyer_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "purchase_requests"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "buyer_id"
+                  ],
+                  "name": "purchase_requests_buyer_id_idx_a09525cc",
+                  "prefix": "purchase_requests_buyer_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "buyer_id",
+                    "idempotency_key"
+                  ]
+                }
+              ]
+            },
             "random_point_logs": {
               "checks": [
                 {
@@ -3369,7 +3562,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8a2ab38a637166638063042d33f132e6ee9f780d2aae7aabc2d264ec84f4b44b"
+    "storageHash": "08ef3e43d3b41a73a84914dbe16dee56c8a53e5e141fa63057aaf331fa9a19ac"
   },
   "execution": {
     "executionHash": "9e1ead8c46d0fa88559da7fa61265772003eee9fc6614f2676529ab300b267d5",

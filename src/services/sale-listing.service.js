@@ -7,8 +7,6 @@ import {
 
 const SORTS = ["latest", "oldest", "priceLow", "priceHigh"];
 const SOLD_OUT = ["true", "false"];
-const FILTERS = ["method", "genre", "soldOut"];
-const ONE_FILTER = "필터는 하나만 선택할 수 있습니다.";
 
 const checkOneOf = (value, allowed, field) => {
   if (value !== undefined && !allowed.includes(value)) {
@@ -63,11 +61,6 @@ export class SaleListingService {
 
   // 기존 마켓 목록 조회
   async getMarketList(query) {
-    const used = FILTERS.filter((key) => query[key] !== undefined);
-
-    if (used.length > 1)
-      throw badRequest(ONE_FILTER, { [used[1]]: ONE_FILTER });
-
     checkOneOf(query.method, METHODS, "method");
     checkOneOf(query.genre, GENRES, "genre");
     checkOneOf(query.soldOut, SOLD_OUT, "soldOut");

@@ -33,10 +33,8 @@ export class AuthService {
 
   async login({ email, password }) {
     const user = await this.authRepository.findByEmail(email);
-    if (!user || !user.password || user.deletedAt) throw unauthorized();
-
     const invalidCredentialsMessage =
-      "이메일 또는 비밀번호가 올바르지 않습니다.";
+      "이메일 또는 비밀번호가 일치하지 않습니다.";
 
     if (!user || !user.password || user.deletedAt) {
       throw unauthorized(invalidCredentialsMessage);

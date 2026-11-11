@@ -1,3 +1,4 @@
+
 const SORT = {
   latest: [(l) => l.createdAt.desc(), (l) => l.id.desc()],
   oldest: [(l) => l.createdAt.asc(), (l) => l.id.asc()],
@@ -13,6 +14,7 @@ export class SaleListingRepository {
     this.db = db;
   }
 
+  // 트랜잭션 안이면 tx, 아니면 db로 쿼리합니다.
   #model(tx) {
     return (tx ?? this.db).orm.public.SaleListing;
   }
@@ -26,7 +28,7 @@ export class SaleListingRepository {
     return this.#model(tx).create(data);
   }
 
-  // 재고 변경 전 판매글 행을 잠급니다.
+  // 재고 변경 전 판매글 행을 잠가 동시 재고 차감을 방지합니다.
   findByIdForUpdate(id, tx) {
     if (!tx) {
       throw new Error("재고 조회에는 트랜잭션이 필요합니다.");
@@ -35,7 +37,7 @@ export class SaleListingRepository {
     return this.#model(tx).where({ id }).forUpdate().first();
   }
 
-  // 남은 판매 수량과 상태를 변경합니다.
+  // 동일한 트랜잭션에서 남은 판매 수량과 상태를 변경합니다.
   updateById(id, data, tx) {
     if (!tx) {
       throw new Error("재고 변경에는 트랜잭션이 필요합니다.");
@@ -45,6 +47,7 @@ export class SaleListingRepository {
   }
 
   // 목록과 개수 조회에 동일한 필터를 사용합니다.
+  // 취소된 판매글은 제외합니다.
   #market({ keyword, method, genre, soldOut }) {
     let query = this.#model().where((l) => l.status.neq("CANCELED"));
 

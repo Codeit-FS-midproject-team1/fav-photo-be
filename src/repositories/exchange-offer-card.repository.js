@@ -11,6 +11,28 @@ export class ExchangeOfferCardRepository {
     return this.#model(tx).where({ id }).first();
   }
 
+  findHeldCardByPhotoCardId(photoCardId, ownerId, tx) {
+    return this.#model(tx)
+      .where({
+        photoCardId,
+        ownerId,
+        status: "HELD",
+      })
+      .orderBy((card) => card.id.asc())
+      .first();
+  }
+
+  findOnSaleCardByListingId(listingId, ownerId, tx) {
+    return this.#model(tx)
+      .where({
+        listingId,
+        ownerId,
+        status: "ON_SALE",
+      })
+      .orderBy((card) => card.id.asc())
+      .first();
+  }
+
   findPhotoCardById(photoCardId, tx) {
     return (tx ?? this.db).orm.public.PhotoCard.where({
       id: photoCardId,
@@ -41,6 +63,54 @@ export class ExchangeOfferCardRepository {
       .updateAndCount({
         status: "HELD",
         offerId: null,
+      });
+  }
+
+  transferOnSaleCard(
+    cardItemId,
+    sellerId,
+    offererId,
+    listingId,
+    acquiredAt,
+    tx,
+  ) {
+    return this.#model(tx)
+      .where({
+        id: cardItemId,
+        ownerId: sellerId,
+        listingId,
+        status: "ON_SALE",
+      })
+      .updateAndCount({
+        ownerId: offererId,
+        status: "HELD",
+        listingId: null,
+        offerId: null,
+        acquiredAt,
+      });
+  }
+
+  transferOfferedCard(
+    cardItemId,
+    offererId,
+    sellerId,
+    offerId,
+    acquiredAt,
+    tx,
+  ) {
+    return this.#model(tx)
+      .where({
+        id: cardItemId,
+        ownerId: offererId,
+        status: "OFFERED",
+        offerId,
+      })
+      .updateAndCount({
+        ownerId: sellerId,
+        status: "HELD",
+        listingId: null,
+        offerId: null,
+        acquiredAt,
       });
   }
 }

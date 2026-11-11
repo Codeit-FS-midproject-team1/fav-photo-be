@@ -1,10 +1,13 @@
+
 import {
   badRequest,
   notFound,
   forbidden,
   conflict,
 } from "#utils/http-error.js";
+
 import { parsePage } from "#utils/pagination.js";
+
 import {
   SALE_PRICE_MIN,
   SALE_PRICE_MAX,
@@ -12,12 +15,13 @@ import {
   POSTGRES_INT_MAX,
 } from "#utils/sale-listing.constants.js";
 
-const METHODS = ["PHOTO", "CRAFT", "AI", "ETC"];
-const GENRES = ["LANDSCAPE", "PORTRAIT", "ANIMAL", "PLANT", "OBJECT", "ETC"];
+import {
+  PHOTO_CARD_METHODS as METHODS,
+  PHOTO_CARD_GENRES as GENRES,
+} from "#app/constants/photo-card.js";
+
 const SORTS = ["latest", "oldest", "priceLow", "priceHigh"];
 const SOLD_OUT = ["true", "false"];
-const FILTERS = ["method", "genre", "soldOut"];
-const ONE_FILTER = "필터는 하나만 선택할 수 있습니다.";
 
 const EDIT_FIELDS = [
   "quantity",
@@ -106,16 +110,11 @@ export class SaleListingService {
     this.notificationService = notificationService;
   }
 
-  // 판매글 목록 조회
+  // ========================================
+  // 1. 판매글 목록 조회
+  // ========================================
+
   async getMarketList(query) {
-    const used = FILTERS.filter((key) => query[key] !== undefined);
-
-    if (used.length > 1) {
-      throw badRequest(ONE_FILTER, {
-        [used[1]]: ONE_FILTER,
-      });
-    }
-
     checkOneOf(query.method, METHODS, "method");
     checkOneOf(query.genre, GENRES, "genre");
     checkOneOf(query.soldOut, SOLD_OUT, "soldOut");
@@ -128,7 +127,9 @@ export class SaleListingService {
 
     const filters = {
       keyword:
-        typeof query.keyword === "string" ? query.keyword.trim() : undefined,
+        typeof query.keyword === "string"
+          ? query.keyword.trim()
+          : undefined,
       method: query.method,
       genre: query.genre,
       soldOut: query.soldOut && query.soldOut === "true",
@@ -149,11 +150,15 @@ export class SaleListingService {
     };
   }
 
-  // 판매글 상세 조회
+  // ========================================
+  // 2. 판매글 상세 조회
+  // ========================================
+
   async getMarketDetail(rawId) {
     const id = parseListingId(rawId);
 
-    const listing = await this.saleListingRepository.findMarketDetailById(id);
+    const listing =
+      await this.saleListingRepository.findMarketDetailById(id);
 
     if (!listing) {
       throw notFound("판매글을 찾을 수 없습니다.");
@@ -162,7 +167,10 @@ export class SaleListingService {
     return toDetail(listing);
   }
 
-  // 판매 등록
+  // ========================================
+  // 3. 판매 등록
+  // ========================================
+
   async create(userId, body) {
     const {
       photoCardId,
@@ -173,6 +181,7 @@ export class SaleListingService {
       exchangeDescription,
     } = body ?? {};
 
+    // 포토카드 ID 검증
     if (
       !Number.isSafeInteger(photoCardId) ||
       photoCardId < 1 ||
@@ -183,6 +192,7 @@ export class SaleListingService {
       });
     }
 
+    // 판매 수량 검증
     if (
       !Number.isSafeInteger(saleQuantity) ||
       saleQuantity < 1 ||
@@ -193,6 +203,7 @@ export class SaleListingService {
       });
     }
 
+    // 판매 가격 검증
     if (
       !Number.isSafeInteger(price) ||
       price < SALE_PRICE_MIN ||
@@ -203,27 +214,34 @@ export class SaleListingService {
       });
     }
 
+    // 교환 희망 제작 방식 검증
     if (!METHODS.includes(exchangeMethod)) {
       throw badRequest(undefined, {
-        exchangeMethod: "올바른 교환 희망 제작 방식을 선택해주세요.",
+        exchangeMethod:
+          "올바른 교환 희망 제작 방식을 선택해주세요.",
       });
     }
 
+    // 교환 희망 장르 검증
     if (!GENRES.includes(exchangeGenre)) {
       throw badRequest(undefined, {
-        exchangeGenre: "올바른 교환 희망 장르를 선택해주세요.",
+        exchangeGenre:
+          "올바른 교환 희망 장르를 선택해주세요.",
       });
     }
 
+    // 교환 희망 설명 검증
     if (
       typeof exchangeDescription !== "string" ||
       exchangeDescription.length > EXCHANGE_DESCRIPTION_MAX
     ) {
       throw badRequest(undefined, {
-        exchangeDescription: `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
+        exchangeDescription:
+          `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
       });
     }
 
+    // 판매글 생성 및 카드 재고 예약을 하나의 트랜잭션으로 처리
     const created = await this.runInTransaction(async (tx) => {
       const listing = await this.saleListingRepository.create(
         {
@@ -256,11 +274,18 @@ export class SaleListingService {
     return this.getMarketDetail(String(created.id));
   }
 
-  // 판매 정보 수정
+  // ========================================
+  // 4. 판매 정보 수정
+  // ========================================
+
   async update(userId, rawId, body) {
     const id = parseListingId(rawId);
 
-    if (!body || typeof body !== "object" || Array.isArray(body)) {
+    if (
+      !body ||
+      typeof body !== "object" ||
+      Array.isArray(body)
+    ) {
       throw badRequest("수정할 정보를 입력해 주세요.");
     }
 
@@ -270,7 +295,9 @@ export class SaleListingService {
       throw badRequest("수정할 정보를 입력해 주세요.");
     }
 
-    const unknownField = keys.find((key) => !EDIT_FIELDS.includes(key));
+    const unknownField = keys.find(
+      (key) => !EDIT_FIELDS.includes(key),
+    );
 
     if (unknownField) {
       throw badRequest(undefined, {
@@ -278,7 +305,7 @@ export class SaleListingService {
       });
     }
 
-    // quantity는 수정 후 남은 판매 수량이다.
+    // 수정 후 남은 판매 수량 검증
     if (Object.hasOwn(body, "quantity")) {
       if (
         !Number.isSafeInteger(body.quantity) ||
@@ -286,11 +313,13 @@ export class SaleListingService {
         body.quantity > POSTGRES_INT_MAX
       ) {
         throw badRequest(undefined, {
-          quantity: "남은 판매 수량은 1 이상의 정수여야 합니다.",
+          quantity:
+            "남은 판매 수량은 1 이상의 정수여야 합니다.",
         });
       }
     }
 
+    // 가격 검증
     if (Object.hasOwn(body, "price")) {
       if (
         !Number.isSafeInteger(body.price) ||
@@ -298,57 +327,70 @@ export class SaleListingService {
         body.price > SALE_PRICE_MAX
       ) {
         throw badRequest(undefined, {
-          price: `판매 가격은 ${SALE_PRICE_MIN}~${SALE_PRICE_MAX}P 사이여야 합니다.`,
+          price:
+            `판매 가격은 ${SALE_PRICE_MIN}~${SALE_PRICE_MAX}P 사이여야 합니다.`,
         });
       }
     }
 
+    // 교환 희망 제작 방식 검증
     if (
       Object.hasOwn(body, "exchangeMethod") &&
       !METHODS.includes(body.exchangeMethod)
     ) {
       throw badRequest(undefined, {
-        exchangeMethod: "올바른 교환 희망 제작 방식을 선택해주세요.",
+        exchangeMethod:
+          "올바른 교환 희망 제작 방식을 선택해주세요.",
       });
     }
 
+    // 교환 희망 장르 검증
     if (
       Object.hasOwn(body, "exchangeGenre") &&
       !GENRES.includes(body.exchangeGenre)
     ) {
       throw badRequest(undefined, {
-        exchangeGenre: "올바른 교환 희망 장르를 선택해주세요.",
+        exchangeGenre:
+          "올바른 교환 희망 장르를 선택해주세요.",
       });
     }
 
+    // 교환 희망 설명 검증
     if (Object.hasOwn(body, "exchangeDescription")) {
       if (
         typeof body.exchangeDescription !== "string" ||
-        body.exchangeDescription.length > EXCHANGE_DESCRIPTION_MAX
+        body.exchangeDescription.length >
+          EXCHANGE_DESCRIPTION_MAX
       ) {
         throw badRequest(undefined, {
-          exchangeDescription: `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
+          exchangeDescription:
+            `교환 희망 설명은 ${EXCHANGE_DESCRIPTION_MAX}자 이하여야 합니다.`,
         });
       }
     }
 
     await this.runInTransaction(async (tx) => {
-      // 판매글을 잠가 동시에 수량이 수정되지 않게 한다.
-      const listing = await this.saleListingRepository.findByIdForUpdate(
-        id,
-        tx,
-      );
+      // 판매글을 잠가 동시에 수량이 수정되지 않게 합니다.
+      const listing =
+        await this.saleListingRepository.findByIdForUpdate(
+          id,
+          tx,
+        );
 
       if (!listing) {
         throw notFound("판매글을 찾을 수 없습니다.");
       }
 
       if (listing.sellerId !== userId) {
-        throw forbidden("본인의 판매글만 수정할 수 있습니다.");
+        throw forbidden(
+          "본인의 판매글만 수정할 수 있습니다.",
+        );
       }
 
       if (listing.status !== "ON_SALE") {
-        throw conflict("판매 중인 판매글만 수정할 수 있습니다.");
+        throw conflict(
+          "판매 중인 판매글만 수정할 수 있습니다.",
+        );
       }
 
       const changes = {};
@@ -362,7 +404,10 @@ export class SaleListingService {
       ];
 
       for (const field of simpleFields) {
-        if (Object.hasOwn(body, field) && body[field] !== listing[field]) {
+        if (
+          Object.hasOwn(body, field) &&
+          body[field] !== listing[field]
+        ) {
           changes[field] = body[field];
         }
       }
@@ -372,20 +417,25 @@ export class SaleListingService {
         Object.hasOwn(body, "quantity") &&
         body.quantity !== listing.remainingQuantity
       ) {
-        const difference = body.quantity - listing.remainingQuantity;
+        const difference =
+          body.quantity - listing.remainingQuantity;
 
-        const nextSaleQuantity = listing.saleQuantity + difference;
+        const nextSaleQuantity =
+          listing.saleQuantity + difference;
 
         if (
           !Number.isSafeInteger(nextSaleQuantity) ||
           nextSaleQuantity < 1 ||
           nextSaleQuantity > POSTGRES_INT_MAX
         ) {
-          throw conflict("변경할 수 있는 판매 수량 범위를 초과했습니다.");
+          throw conflict(
+            "변경할 수 있는 판매 수량 범위를 초과했습니다.",
+          );
         }
 
         if (difference > 0) {
-          // 수량 증가: HELD 카드를 추가로 ON_SALE 처리
+          // 수량 증가
+          // HELD 카드를 추가로 ON_SALE 처리
           await this.stockService.reserveForSale(
             {
               sellerId: listing.sellerId,
@@ -396,7 +446,8 @@ export class SaleListingService {
             tx,
           );
         } else {
-          // 수량 감소: 초과된 판매 카드를 HELD로 복구
+          // 수량 감소
+          // 초과된 판매 카드를 HELD로 복구
           const releasedCount =
             await this.cardItemRepository.releaseFromSaleListing(
               id,
@@ -405,8 +456,12 @@ export class SaleListingService {
               tx,
             );
 
-          if (releasedCount !== Math.abs(difference)) {
-            throw conflict("판매 카드 수량이 일치하지 않습니다.");
+          if (
+            releasedCount !== Math.abs(difference)
+          ) {
+            throw conflict(
+              "판매 카드 수량이 일치하지 않습니다.",
+            );
           }
         }
 
@@ -414,27 +469,36 @@ export class SaleListingService {
         changes.remainingQuantity = body.quantity;
       }
 
-      // 실제 변경이 없다면 저장하거나 알리지 않는다.
+      // 변경된 내용이 없다면 저장하거나 알리지 않습니다.
       if (Object.keys(changes).length === 0) {
         return;
       }
 
-      await this.saleListingRepository.updateById(id, changes, tx);
-
-      // 현재 대기 중인 교환 제안자에게 수정 알림
-      const offers = await this.exchangeOfferRepository.findByListingId(id, {
+      // 판매 정보 수정
+      await this.saleListingRepository.updateById(
+        id,
+        changes,
         tx,
-      });
+      );
 
-      const offererIds = new Set(offers.map((offer) => offer.offererId));
+      // 대기 중인 교환 제안자에게 수정 알림
+      const offers =
+        await this.exchangeOfferRepository.findByListingId(
+          id,
+          { tx },
+        );
+
+      const offererIds = new Set(
+        offers.map((offer) => offer.offererId),
+      );
 
       for (const offererId of offererIds) {
         await this.notificationService.notify(
           {
             userId: offererId,
             type: "LISTING_UPDATED",
-            message: "교환을 제안한 판매글의 정보가 수정되었습니다.",
-            // FE 상세 경로가 확정되면 실제 경로로 변경
+            message:
+              "교환을 제안한 판매글의 정보가 수정되었습니다.",
             link: "/",
           },
           tx,
@@ -445,32 +509,45 @@ export class SaleListingService {
     return this.getMarketDetail(String(id));
   }
 
-  // 판매 취소
+  // ========================================
+  // 5. 판매 취소
+  // ========================================
+
   async cancel(userId, rawId) {
     const id = parseListingId(rawId);
 
     await this.runInTransaction(async (tx) => {
-      const listing = await this.saleListingRepository.findByIdForUpdate(
-        id,
-        tx,
-      );
+      // 판매글 잠금
+      const listing =
+        await this.saleListingRepository.findByIdForUpdate(
+          id,
+          tx,
+        );
 
       if (!listing) {
         throw notFound("판매글을 찾을 수 없습니다.");
       }
 
       if (listing.sellerId !== userId) {
-        throw forbidden("본인의 판매글만 취소할 수 있습니다.");
+        throw forbidden(
+          "본인의 판매글만 취소할 수 있습니다.",
+        );
       }
 
       if (listing.status !== "ON_SALE") {
-        throw conflict("판매 중인 판매글만 취소할 수 있습니다.");
+        throw conflict(
+          "판매 중인 판매글만 취소할 수 있습니다.",
+        );
       }
 
-      const offers = await this.exchangeOfferRepository.findByListingId(id, {
-        tx,
-      });
+      // 대기 중인 교환 제안 조회
+      const offers =
+        await this.exchangeOfferRepository.findByListingId(
+          id,
+          { tx },
+        );
 
+      // 교환 제안 자동 거절 및 제시 카드 복구
       for (const offer of offers) {
         const updatedCount =
           await this.exchangeOfferRepository.updateStatusIfPending(
@@ -480,7 +557,9 @@ export class SaleListingService {
           );
 
         if (updatedCount !== 1) {
-          throw conflict("교환 제안 상태가 변경되었습니다.");
+          throw conflict(
+            "교환 제안 상태가 변경되었습니다.",
+          );
         }
 
         const restoredCount =
@@ -492,10 +571,13 @@ export class SaleListingService {
           );
 
         if (restoredCount !== 1) {
-          throw conflict("교환 제시 카드를 복구할 수 없습니다.");
+          throw conflict(
+            "교환 제시 카드를 복구할 수 없습니다.",
+          );
         }
       }
 
+      // 남은 판매 카드를 보유 상태로 복구
       const restoredSaleCount =
         await this.cardItemRepository.restoreFromSaleListing(
           id,
@@ -503,13 +585,20 @@ export class SaleListingService {
           tx,
         );
 
-      if (restoredSaleCount !== listing.remainingQuantity) {
-        throw conflict("판매 카드 수량이 일치하지 않습니다.");
+      if (
+        restoredSaleCount !== listing.remainingQuantity
+      ) {
+        throw conflict(
+          "판매 카드 수량이 일치하지 않습니다.",
+        );
       }
 
+      // 판매글 취소 상태로 변경
       await this.saleListingRepository.updateById(
         id,
-        { status: "CANCELED" },
+        {
+          status: "CANCELED",
+        },
         tx,
       );
     });

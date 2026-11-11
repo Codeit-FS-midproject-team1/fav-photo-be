@@ -1,13 +1,10 @@
+
 import { Router } from "express";
 
 import { createAuthRouter } from "./auth.router.js";
-
 import { createUserRouter } from "./user.router.js";
-
 import { createPhotoCardRouter } from "./photo-card.router.js";
-
 import { createNotificationRouter } from "./notification.router.js";
-
 import { createSaleListingRouter } from "./sale-listing.router.js";
 
 import {
@@ -20,6 +17,10 @@ import {
   createPurchaseHistoryRouter,
 } from "./purchase.router.js";
 
+import { createMyGalleryRouter } from "./my-gallery.router.js";
+import { createMySalesRouter } from "./my-sales.router.js";
+import { createRandomPointRouter } from "./random-point.router.js";
+
 export const createApiRouter = ({
   requireAuth,
   userController,
@@ -30,6 +31,9 @@ export const createApiRouter = ({
   saleListingController,
   exchangeOfferController,
   purchaseController,
+  myGalleryController,
+  mySalesController,
+  randomPointController,
 }) =>
   Router()
     // ========================================
@@ -55,7 +59,29 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 3. 포토카드 API
+    // 3. 마이갤러리 API
+    // ========================================
+    .use(
+      "/users/me/cards",
+      createMyGalleryRouter({
+        myGalleryController,
+        requireAuth,
+      }),
+    )
+
+    // ========================================
+    // 4. 나의 판매 API
+    // ========================================
+    .use(
+      "/users/me/sales",
+      createMySalesRouter({
+        mySalesController,
+        requireAuth,
+      }),
+    )
+
+    // ========================================
+    // 5. 포토카드 API
     // ========================================
     .use(
       "/photo-cards",
@@ -67,7 +93,7 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 4. 알림 API
+    // 6. 알림 API
     // ========================================
     .use(
       "/notifications",
@@ -78,7 +104,7 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 5. 판매 API
+    // 7. 판매 API
     // ========================================
     .use(
       "/sale-listings",
@@ -89,7 +115,7 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 6. 교환 제안 생성·조회 API
+    // 8. 교환 제안 생성 및 조회 API
     // ========================================
     .use(
       "/sale-listings",
@@ -100,7 +126,7 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 7. 교환 제안 처리 API
+    // 9. 교환 제안 처리 API
     // ========================================
     .use(
       "/offers",
@@ -111,8 +137,7 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 8. 구매 POST API
-    // POST /api/sale-listings/:id/purchases
+    // 10. 구매 API
     // ========================================
     .use(
       "/sale-listings",
@@ -123,14 +148,23 @@ export const createApiRouter = ({
     )
 
     // ========================================
-    // 9. 구매 내역 조회 API
-    // GET /api/purchases
-    // GET /api/purchases/:id
+    // 11. 기존 구매 조회 API
     // ========================================
     .use(
       "/purchases",
       createPurchaseHistoryRouter({
         purchaseController,
+        requireAuth,
+      }),
+    )
+
+    // ========================================
+    // 12. 랜덤 포인트 API
+    // ========================================
+    .use(
+      "/random-points",
+      createRandomPointRouter({
+        randomPointController,
         requireAuth,
       }),
     );

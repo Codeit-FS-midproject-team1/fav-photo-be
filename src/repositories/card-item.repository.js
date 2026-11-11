@@ -127,4 +127,59 @@ export class CardItemRepository {
 
     return restoredCount;
   }
+
+  // 구매 시 판매 카드의 소유권을 구매자에게 이전
+  // ON_SALE → HELD
+  // ownerId: 판매자 → 구매자
+  async transferSaleItemsToBuyer(
+    { listingId, sellerId, buyerId, quantity },
+    tx,
+  ) {
+    if (!tx) {
+      throw new Error("카드 소유권 이전에는 트랜잭션이 필요합니다.");
+    }
+
+    // 해당 판매글의 판매 중인 카드만 조회하고 잠급니다.
+    const items = await this.#model(tx)
+      .where({
+        listingId,
+        ownerId: sellerId,
+        status: "ON_SALE",
+      })
+      .orderBy([(item) => item.id.asc()])
+      .limit(quantity)
+      .forUpdate()
+      .all();
+
+    if (items.length !== quantity) {
+      return 0;
+    }
+
+    let transferredCount = 0;
+
+    for (const item of items) {
+      const count = await this.#model(tx)
+        .where({
+          id: item.id,
+          listingId,
+          ownerId: sellerId,
+          status: "ON_SALE",
+        })
+        .updateAndCount({
+          ownerId: buyerId,
+          status: "HELD",
+          listingId: null,
+          offerId: null,
+          acquiredAt: new Date().toISOString(),
+        });
+
+      if (count !== 1) {
+        throw new Error("포토카드 소유권 이전에 실패했습니다.");
+      }
+
+      transferredCount += count;
+    }
+
+    return transferredCount;
+  }
 }

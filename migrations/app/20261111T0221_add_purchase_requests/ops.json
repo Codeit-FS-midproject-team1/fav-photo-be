@@ -1,0 +1,164 @@
+[
+  {
+    "id": "table.purchase_requests",
+    "label": "Create table \"purchase_requests\"",
+    "summary": "Creates table \"purchase_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "purchase_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"purchase_requests\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"purchase_requests\"",
+        "sql": "CREATE TABLE \"public\".\"purchase_requests\" (\n  \"buyer_id\" int4 NOT NULL,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"idempotency_key\" text NOT NULL,\n  \"request_hash\" text NOT NULL,\n  \"response_json\" text,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"purchase_requests\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.purchase_requests.purchase_requests_buyer_id_idempotency_key_key",
+    "label": "Add unique constraint on \"purchase_requests\" (buyer_id, idempotency_key)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "purchase_requests_buyer_id_idempotency_key_key",
+        "table": "purchase_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"purchase_requests_buyer_id_idempotency_key_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_requests_buyer_id_idempotency_key_key",
+          "public",
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"purchase_requests_buyer_id_idempotency_key_key\"",
+        "sql": "ALTER TABLE \"public\".\"purchase_requests\" ADD CONSTRAINT \"purchase_requests_buyer_id_idempotency_key_key\" UNIQUE (\"buyer_id\", \"idempotency_key\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"purchase_requests_buyer_id_idempotency_key_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_requests_buyer_id_idempotency_key_key",
+          "public",
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.purchase_requests.purchase_requests_buyer_id_idx_a09525cc",
+    "label": "Create index \"purchase_requests_buyer_id_idx_a09525cc\" on \"purchase_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "purchase_requests_buyer_id_idx_a09525cc",
+        "table": "purchase_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"purchase_requests_buyer_id_idx_a09525cc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_requests_buyer_id_idx_a09525cc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"purchase_requests_buyer_id_idx_a09525cc\"",
+        "sql": "CREATE INDEX \"purchase_requests_buyer_id_idx_a09525cc\" ON \"public\".\"purchase_requests\" (\"buyer_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"purchase_requests_buyer_id_idx_a09525cc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_requests_buyer_id_idx_a09525cc\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.purchase_requests.purchase_requests_buyer_id_fkey",
+    "label": "Add foreign key \"purchase_requests_buyer_id_fkey\" on \"purchase_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "purchase_requests_buyer_id_fkey",
+        "table": "purchase_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"purchase_requests_buyer_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_requests_buyer_id_fkey",
+          "public",
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"purchase_requests_buyer_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"purchase_requests\"\nADD CONSTRAINT \"purchase_requests_buyer_id_fkey\"\nFOREIGN KEY (\"buyer_id\")\nREFERENCES \"public\".\"users\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"purchase_requests_buyer_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_requests_buyer_id_fkey",
+          "public",
+          "\"public\".\"purchase_requests\""
+        ]
+      }
+    ]
+  }
+]

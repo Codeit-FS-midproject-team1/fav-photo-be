@@ -1,4 +1,5 @@
 import { db } from "#prisma/db.js";
+
 import { UserRepository } from "#repositories/user.repository.js";
 import { UserService } from "#services/user.service.js";
 import { UserController } from "#controllers/user.controller.js";
@@ -32,61 +33,109 @@ import { ExchangeOfferCardRepository } from "./repositories/exchange-offer-card.
 import { ExchangeOfferService } from "./services/exchange-offer.service.js";
 import { ExchangeOfferController } from "./controllers/exchange-offer.controller.js";
 
+// 포인트 관련
+import { PointRepository } from "#repositories/point.repository.js";
+import { PointHistoryRepository } from "#repositories/point-history.repository.js";
+import { PointService } from "#services/point.service.js";
+
+// 구매 관련
+import { TradeRepository } from "#repositories/trade.repository.js";
+import { PurchaseRequestRepository } from "#repositories/purchase-request.repository.js";
+import { PurchaseService } from "#services/purchase.service.js";
+import { PurchaseController } from "#controllers/purchase.controller.js";
+
+// 품절 시 교환 제안 자동 정리
+import { PendingOfferCleanupRepository } from "#repositories/pending-offer-cleanup.repository.js";
+
 // ========================================
 // 1. Repository 생성
 // ========================================
 
+// 사용자
 const userRepository = new UserRepository(db);
 
+// 인증
 const authRepository = new AuthRepository(db);
 
+// 포토카드
 const photoCardRepository = new PhotoCardRepository(db);
 
 const cardItemRepository = new CardItemRepository(db);
 
 const creationLogRepository = new CreationLogRepository(db);
 
+// 알림
 const notificationRepository = new NotificationRepository(db);
 
+// 판매
 const saleListingRepository = new SaleListingRepository(db);
 
-// 교환 담당 팀원의 Repository 유지
+// 교환
 const exchangeOfferRepository = new ExchangeOfferRepository(db);
 
 const exchangeOfferListingRepository = new ExchangeOfferListingRepository(db);
 
 const cardRepository = new ExchangeOfferCardRepository(db);
 
+// 포인트
+const pointRepository = new PointRepository(db);
+
+const pointHistoryRepository = new PointHistoryRepository(db);
+
+// 구매 거래 기록
+const tradeRepository = new TradeRepository(db);
+
+// 구매 중복 요청 방지
+const purchaseRequestRepository = new PurchaseRequestRepository(db);
+
+// 품절 시 대기 중 교환 제안 정리
+const pendingOfferCleanupRepository = new PendingOfferCleanupRepository({
+  db,
+  exchangeOfferRepository,
+  exchangeOfferCardRepository: cardRepository,
+});
+
 // ========================================
 // 2. 공통 Service 생성
 // ========================================
 
+// 알림 Service
 const notificationService = new NotificationService({
   notificationRepository,
 });
 
+// 판매 재고 Service
 const stockService = new StockService({
   saleListingRepository,
   cardItemRepository,
   notificationService,
+  pendingOfferCleanupRepository,
 });
 
-// 판매 등록과 취소에서 공통으로 사용하는 트랜잭션
+// 포인트 Service
+const pointService = new PointService({
+  pointRepository,
+  pointHistoryRepository,
+});
+
+// DB 트랜잭션
 const runInTransaction = (fn) => db.transaction(fn);
 
 // ========================================
 // 3. 기능별 Service 생성
 // ========================================
 
+// 사용자 Service
 const userService = new UserService({
   userRepository,
 });
 
+// 인증 Service
 const authService = new AuthService({
   authRepository,
 });
 
-// 판매 등록 / 조회 / 취소
+// 판매 등록 / 조회 / 수정 / 취소
 const saleListingService = new SaleListingService({
   saleListingRepository,
   stockService,
@@ -94,15 +143,17 @@ const saleListingService = new SaleListingService({
   cardItemRepository,
   exchangeOfferRepository,
   exchangeOfferCardRepository: cardRepository,
+  notificationService,
 });
 
-// 포토카드 이미지 저장소
+// Cloudinary 이미지 저장소
 const imageStorage = new CloudinaryImageStorage({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
   apiKey: process.env.CLOUDINARY_API_KEY,
   apiSecret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// 포토카드 생성 / 조회
 const photoCardService = new PhotoCardService({
   photoCardRepository,
   cardItemRepository,
@@ -111,7 +162,7 @@ const photoCardService = new PhotoCardService({
   runInTransaction,
 });
 
-// 교환 담당 팀원의 Service 유지
+// 교환 Service
 const exchangeOfferService = new ExchangeOfferService({
   exchangeOfferRepository,
   saleListingRepository: exchangeOfferListingRepository,
@@ -120,36 +171,60 @@ const exchangeOfferService = new ExchangeOfferService({
   db,
 });
 
+// 구매 Service
+const purchaseService = new PurchaseService({
+  saleListingRepository,
+  cardItemRepository,
+  stockService,
+  pointService,
+  tradeRepository,
+  purchaseRequestRepository,
+  notificationService,
+  runInTransaction,
+});
+
 // ========================================
 // 4. Middleware / Controller 생성
 // ========================================
 
+// 로그인 인증
 const requireAuth = createRequireAuth({
   userRepository,
 });
 
+// 사용자 Controller
 const userController = new UserController({
   userService,
 });
 
+// 인증 Controller
 const authController = new AuthController({
   authService,
 });
 
+// 포토카드 Controller
 const photoCardController = new PhotoCardController({
   photoCardService,
 });
 
+// 알림 Controller
 const notificationController = new NotificationController({
   notificationService,
 });
 
+// 판매 Controller
 const saleListingController = new SaleListingController({
   saleListingService,
 });
 
+// 교환 Controller
 const exchangeOfferController = new ExchangeOfferController({
   exchangeOfferService,
+});
+
+// 구매 Controller
+const purchaseController = new PurchaseController({
+  purchaseService,
 });
 
 // ========================================
@@ -165,4 +240,5 @@ export const apiRouter = createApiRouter({
   notificationController,
   saleListingController,
   exchangeOfferController,
+  purchaseController,
 });

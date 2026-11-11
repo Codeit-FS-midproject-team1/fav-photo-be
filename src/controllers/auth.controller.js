@@ -10,6 +10,13 @@ const googleClient = new OAuth2Client(
   process.env.GOOGLE_REDIRECT_URI,
 );
 
+const isProduction = process.env.NODE_ENV === "production";
+const sessionCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+};
+
 export class AuthController {
   constructor({ authService }) {
     this.authService = authService;
@@ -26,9 +33,7 @@ export class AuthController {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...sessionCookieOptions,
       path: "/api/auth",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -42,9 +47,7 @@ export class AuthController {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...sessionCookieOptions,
       path: "/api/auth",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -56,9 +59,7 @@ export class AuthController {
     await this.authService.logout(req.cookies?.refreshToken);
 
     res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...sessionCookieOptions,
       path: "/api/auth",
     });
 
@@ -146,9 +147,7 @@ export class AuthController {
       );
 
       res.cookie("googleSignup", signupToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        ...sessionCookieOptions,
         path: "/api/auth/google/signup",
         maxAge: 10 * 60 * 1000,
       });
@@ -159,9 +158,7 @@ export class AuthController {
     }
 
     res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...sessionCookieOptions,
       path: "/api/auth",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -199,19 +196,13 @@ export class AuthController {
         nickname,
       });
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    };
-
     res.clearCookie("googleSignup", {
-      ...cookieOptions,
+      ...sessionCookieOptions,
       path: "/api/auth/google/signup",
     });
 
     res.cookie("refreshToken", refreshToken, {
-      ...cookieOptions,
+      ...sessionCookieOptions,
       path: "/api/auth",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

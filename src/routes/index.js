@@ -10,6 +10,7 @@ import { createNotificationRouter } from "./notification.router.js";
 import { createSaleListingRouter } from "./sale-listing.router.js";
 import { createMyGalleryRouter } from "./my-gallery.router.js";
 import { createRandomPointRouter } from "./random-point.router.js";
+import { createMySalesRouter } from "./my-sales.router.js";
 
 export const createApiRouter = ({
   requireAuth,
@@ -21,6 +22,7 @@ export const createApiRouter = ({
   saleListingController,
   exchangeOfferController,
   myGalleryController,
+  mySalesController,
   randomPointController,
 }) =>
   Router()
@@ -29,6 +31,14 @@ export const createApiRouter = ({
     .use(
       "/users/me/cards",
       createMyGalleryRouter({ myGalleryController, requireAuth }),
+    )
+    .use(
+      "/users/me/sales",
+      createMySalesRouter({ mySalesController, requireAuth }),
+    )
+    .use(
+      "/users/me/sales",
+      createMySalesRouter({ mySalesController, requireAuth }),
     )
     .use(
       "/photo-cards",

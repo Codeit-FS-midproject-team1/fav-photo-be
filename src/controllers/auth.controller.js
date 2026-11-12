@@ -42,9 +42,14 @@ export class AuthController {
   };
 
   refresh = async (req, res) => {
-    const { accessToken, refreshToken } = await this.authService.refresh(
-      req.cookies?.refreshToken,
-    );
+    const refreshCookie = req.cookies?.refreshToken;
+
+    if (refreshCookie === undefined) {
+      return res.status(204).end();
+    }
+
+    const { accessToken, refreshToken } =
+      await this.authService.refresh(refreshCookie);
 
     res.cookie("refreshToken", refreshToken, {
       ...sessionCookieOptions,

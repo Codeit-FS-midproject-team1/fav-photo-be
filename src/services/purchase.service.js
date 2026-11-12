@@ -229,7 +229,7 @@ export class PurchaseService {
             userId: validBuyerId,
             type: "PURCHASE_COMPLETED",
             message: "포토카드 구매가 완료되었습니다.",
-            link: "/",
+            link: "/my-gallery",
           },
           tx,
         );
@@ -240,7 +240,7 @@ export class PurchaseService {
             userId: listing.sellerId,
             type: "SALE_COMPLETED",
             message: "판매 중인 포토카드가 판매되었습니다.",
-            link: "/",
+            link: `/marketplace/${listing.id}`,
           },
           tx,
         );

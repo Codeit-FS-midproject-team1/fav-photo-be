@@ -5,9 +5,10 @@ import { conflict } from "../utils/http-error.js";
 import { unauthorized } from "../utils/http-error.js";
 
 export class AuthService {
-  constructor({ authRepository, db }) {
+  constructor({ authRepository, db, pointService }) {
     this.authRepository = authRepository;
     this.db = db;
+    this.pointService = pointService;
   }
 
   async signup({ email, nickname, password }) {
@@ -18,17 +19,20 @@ export class AuthService {
     if (nicknameUser) throw conflict("이미 사용 중인 닉네임입니다.");
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.authRepository.createUser({
-      email,
-      nickname,
-      password: hashedPassword,
-    });
+    return this.db.transaction(async (tx) => {
+      const user = await this.authRepository.createUser(
+        { email, nickname, password: hashedPassword },
+        tx,
+      );
+      const bonus = await this.pointService.grantSignupBonus(user.id, tx);
 
-    return {
-      id: user.id,
-      email: user.email,
-      nickname: user.nickname,
-    };
+      return {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        signupBonusPoints: bonus.amount,
+      };
+    });
   }
 
   async login({ email, password }) {
@@ -150,7 +154,9 @@ export class AuthService {
         tx,
       );
 
-      return this.#issueTokens(user.id, tx);
+      const bonus = await this.pointService.grantSignupBonus(user.id, tx);
+      const tokens = await this.#issueTokens(user.id, tx);
+      return { ...tokens, signupBonusPoints: bonus.amount };
     });
   }
 }

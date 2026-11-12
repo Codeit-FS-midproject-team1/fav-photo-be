@@ -194,7 +194,7 @@ export class AuthController {
       throw unauthorized("Google 계정 정보를 확인할 수 없습니다.");
     }
 
-    const { accessToken, refreshToken } =
+    const { accessToken, refreshToken, signupBonusPoints } =
       await this.authService.signupWithGoogle({
         googleId: profile.sub,
         email: profile.email,
@@ -212,6 +212,6 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).json({ accessToken });
+    return res.status(201).json({ accessToken, signupBonusPoints });
   };
 }

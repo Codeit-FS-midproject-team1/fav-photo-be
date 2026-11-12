@@ -221,7 +221,7 @@ export class ExchangeOfferService {
           userId: lockedListing.sellerId,
           type: "OFFER_RECEIVED",
           message: `${offerer.nickname}님이 [${photoCard.name}] 포토카드 교환을 제안했습니다.`,
-          link: null,
+          link: `/marketplace/${id}`,
         },
         tx,
       );
@@ -355,7 +355,7 @@ export class ExchangeOfferService {
           userId: offer.offererId,
           type: "OFFER_REJECTED",
           message: `${seller.nickname}님이 [${photoCard.name}] 포토카드 교환 제안을 거절했습니다.`,
-          link: null,
+          link: `/marketplace/${listing.id}`,
         },
         tx,
       );
@@ -558,7 +558,7 @@ export class ExchangeOfferService {
           userId: offer.offererId,
           type: "OFFER_ACCEPTED",
           message: `${seller.nickname}님이 [${photoCard.name}] 포토카드 교환 제안을 승인했습니다.`,
-          link: null,
+          link: `/marketplace/${listing.id}`,
         },
         tx,
       );

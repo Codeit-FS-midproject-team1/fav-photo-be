@@ -66,21 +66,25 @@ export class MyGalleryService {
       maxSize: 50,
     });
 
-    // 2) DB 조회: method 는 빼고 가져온다 (summary 는 method 필터와 상관없이 센다)
-    const rows = await this.photoCardRepository.findHeldByOwner(userId, {
-      keyword,
-      genre: query.genre,
-    });
+    /// 2) DB 조회: 내 보유 카드 전체 (summary 는 필터와 상관없이 센다)
+    const rows = await this.photoCardRepository.findHeldByOwner(userId, {});
     const all = rows.map(toItem);
 
     // 3) 제작 방식별 종류 수
-    const methodCounts = Object.fromEntries(METHODS.map((method) => [method, 0]));
+    const methodCounts = Object.fromEntries(
+      METHODS.map((method) => [method, 0]),
+    );
     for (const item of all) methodCounts[item.photoCard.method] += 1;
 
-    // 4) method 필터 → 정렬 → 페이지 자르기
-    const filtered = query.method
-      ? all.filter((item) => item.photoCard.method === query.method)
-      : all;
+    // 4) 검색어·장르·제작 방식 필터 → 정렬 → 페이지 자르기
+    const lowerKeyword = keyword?.toLowerCase();
+    const filtered = all.filter(
+      (item) =>
+        (!lowerKeyword ||
+          item.photoCard.name.toLowerCase().includes(lowerKeyword)) &&
+        (!query.genre || item.photoCard.genre === query.genre) &&
+        (!query.method || item.photoCard.method === query.method),
+    );
     filtered.sort(COMPARE[query.sort ?? "LATEST"]);
 
     const totalItems = filtered.length;

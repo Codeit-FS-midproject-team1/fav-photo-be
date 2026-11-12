@@ -135,4 +135,10 @@ export class PointService {
       seller: sellerResult,
     };
   }
+
+  async grantSignupBonus(userId, tx) {
+    this.#requireTransaction(tx);
+    const user = await this.#lockUser(userId, tx);
+    return this.#applyChange(user, 10, "SIGNUP", tx);
+  }
 }

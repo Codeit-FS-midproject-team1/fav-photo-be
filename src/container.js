@@ -191,6 +191,7 @@ const userService = new UserService({
 
 // 인증
 const authService = new AuthService({
+  pointService,
   authRepository,
   db,
 });
